@@ -5,15 +5,25 @@
   
 
   
-  <title>Rin&#39;s blog</title>
+  <title>grid布局 | Rin&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Rin&#39;s blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="Grid（网格）布局，顾名思义，它把页面划分成一个个网格，可以自由控制网格大小、位置以达到不同的布局样式。网格是由一组水平垂直相交的直线所形成的，水平网格线划分出行，垂直网格线划分出列。 和flex布局类似，grid布局也有容器属性和项目属性这两种属性，在一个元素上应用了 display: grid; 则这个元素为容器元素，其内部的子元素为网格元素。下面将结合以下代码学习网格布局： Html如下：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="grid布局">
+<meta property="og:url" content="http://yoursite.com/2019/06/21/grid布局/index.html">
 <meta property="og:site_name" content="Rin&#39;s blog">
+<meta property="og:description" content="Grid（网格）布局，顾名思义，它把页面划分成一个个网格，可以自由控制网格大小、位置以达到不同的布局样式。网格是由一组水平垂直相交的直线所形成的，水平网格线划分出行，垂直网格线划分出列。 和flex布局类似，grid布局也有容器属性和项目属性这两种属性，在一个元素上应用了 display: grid; 则这个元素为容器元素，其内部的子元素为网格元素。下面将结合以下代码学习网格布局： Html如下：">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/2019/06/21/grid布局/images/0621/1-1.PNG">
+<meta property="og:image" content="http://yoursite.com/2019/06/21/grid布局/images/0621/1-2.PNG">
+<meta property="og:image" content="http://yoursite.com/2019/06/21/grid布局/images/0621/1-3.PNG">
+<meta property="og:image" content="http://yoursite.com/2019/06/21/grid布局/images/0621/1-4.PNG">
+<meta property="og:image" content="http://yoursite.com/2019/06/21/grid布局/images/0621/1-5.PNG">
+<meta property="og:updated_time" content="2019-06-22T03:47:06.407Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Rin&#39;s blog">
+<meta name="twitter:title" content="grid布局">
+<meta name="twitter:description" content="Grid（网格）布局，顾名思义，它把页面划分成一个个网格，可以自由控制网格大小、位置以达到不同的布局样式。网格是由一组水平垂直相交的直线所形成的，水平网格线划分出行，垂直网格线划分出列。 和flex布局类似，grid布局也有容器属性和项目属性这两种属性，在一个元素上应用了 display: grid; 则这个元素为容器元素，其内部的子元素为网格元素。下面将结合以下代码学习网格布局： Html如下：">
+<meta name="twitter:image" content="http://yoursite.com/2019/06/21/grid布局/images/0621/1-1.PNG">
   
     <link rel="alternate" href="/atom.xml" title="Rin&#39;s blog" type="application/atom+xml">
   
@@ -60,9 +70,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-grid布局" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-grid布局" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/06/21/grid布局/" class="article-date">
   <time datetime="2019-06-21T07:07:51.000Z" itemprop="datePublished">2019-06-21</time>
@@ -75,8 +83,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/06/21/grid布局/">grid布局</a>
+    <h1 class="article-title" itemprop="name">
+      grid布局
     </h1>
   
 
@@ -127,67 +135,19 @@
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-节流和防抖函数" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/06/13/节流和防抖函数/" class="article-date">
-  <time datetime="2019-06-13T03:34:44.000Z" itemprop="datePublished">2019-06-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/06/13/节流和防抖函数/">节流和防抖函数</a>
-    </h1>
+    <a href="/2019/06/13/节流和防抖函数/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">节流和防抖函数</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>前两天写轮播图的时候，发现了一个问题就是在快速多次点击翻页按钮的时候，会多次触发翻页函数，此时由于上一次翻页的动画还没结束，就会出现很多问题。这个时候就需要用到节流函数。节流和防抖这两个概念经常都是一起出现的，自己对这两个概念和方法也不是很熟，在这篇博客里就放到一起写了。</p>
-<h2 id="节流-防抖的概念及区别"><a href="#节流-防抖的概念及区别" class="headerlink" title="节流/防抖的概念及区别"></a>节流/防抖的概念及区别</h2><p><strong>节流</strong>(throttle)： 某个函数在一个特定的时间内只执行一次。比如调整窗口大小时，resize事件会持续被触发，使用节流函数可以让其在事件触发期间每间隔一段时间执行一次，而不是每触发一次事件执行一次事件函数。</p>
-<p><strong>防抖</strong>（debounce)： 在事件触发后一段时间t内没检测到事件时则开始执行事件函数，若在t内再次检测到了事件触发那么重新开始计时。也就是防抖是在一个动作结束后才执行。</p>
-<p>下面这张图可以很形象的说明节流和防抖的区别，第一行是正常的事件触发频率，可以看到防抖是把在动作结束后一段时间内未再次检测到事件触发则执行，它可以把函数的多次调用压缩成一次。而节流则相当于减满了函数的执行速度。</p>
-<p><img src="./images/throttle_debounce.png" alt="avatar"></p>
-<p>图片来自 (<a href="http://demo.nimius.net/debounce_throttle/" target="_blank" rel="noopener">http://demo.nimius.net/debounce_throttle/</a>)</p>
-<p>以下可能会高频触发的事件可能会导致页面卡顿、浏览器奔溃等情况出现，如果在事件函数中写了异步操作的话，可能会导致结果和预想的不一样，为了绕开这些问题，可以使用节流/防抖：</p>
-<ul>
-<li>click</li>
-<li>resize</li>
-<li>input</li>
-<li>scroll</li>
-<li>mousemove</li>
-<li>…</li>
-</ul>
-<p>节流比防抖更适合用于一些触发更频繁的场景中，如动画相关的resize/scroll等，而防抖适合用于input/keyup</p>
-<h2 id="节流的实现"><a href="#节流的实现" class="headerlink" title="节流的实现"></a>节流的实现</h2><p>事件触发时，计算这次触发的时间与上次执行函数的时间之差，如果时间差达到设定的时间间隔，则执行这个函数，否则不执行。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  *@param&#123;function&#125; fn 实际要执行的函数</span></span><br><span class="line"><span class="comment">  *@param&#123;Object&#125; context 执行的作用域</span></span><br><span class="line"><span class="comment">  *@param&#123;Number&#125; t 设定的时间间隔</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">throttle</span>(<span class="params">fn, context, t</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> timer = <span class="literal">null</span>;</span><br><span class="line">  <span class="keyword">var</span> startTime = <span class="keyword">new</span> <span class="built_in">Date</span>();</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> context = <span class="keyword">this</span>;</span><br><span class="line">    <span class="keyword">var</span> endTime = <span class="keyword">new</span> <span class="built_in">Date</span>();</span><br><span class="line">    <span class="keyword">var</span> interval = endTime - startTime;</span><br><span class="line">    <span class="keyword">if</span> (interval &gt;= t)&#123;</span><br><span class="line">        fn.call(context);</span><br><span class="line">        <span class="comment">//执行完函数之后重置初始时间，等于最后一次触发的时间</span></span><br><span class="line">        startTime = endTime;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="防抖的实现"><a href="#防抖的实现" class="headerlink" title="防抖的实现"></a>防抖的实现</h2><p>使用定时器，在每次事件触发时，清除定时器，直到设定的时间内没有事件触发，则函数被执行</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  *@param&#123;function&#125; fn 实际要执行的函数</span></span><br><span class="line"><span class="comment">  *@param&#123;Object&#125; context 执行的作用域</span></span><br><span class="line"><span class="comment">  *@param&#123;Number&#125; t 设定的时间间隔</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">debounce</span>(<span class="params">fn, context, t</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> timer = <span class="literal">null</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    clearTimeout(timer);</span><br><span class="line">    timer = setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      fn.call(context);</span><br><span class="line">    &#125;, t);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/13/节流和防抖函数/" data-id="cjx5r5o210001gkuou6wv318f" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
   
 </article>
-
-
-  
-
 
 </section>
         
