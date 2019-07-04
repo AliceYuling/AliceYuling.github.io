@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Service Worker学习小结 | Rin&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="什么是 Service WorkerService Worker 是一段运行在浏览器后台中的脚本，它独立于当前页面，提供了那些不需要与web页面交互的功能在网页背后悄悄执行的能力。 [1] Service Worker 是 PWA 当中的一部分，它是一个可编程的网络代理，可以控制 Web 页面的所有网络请求。 Service Worker 独立于 JavaScript 主进程，它无法直接访问 DO">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Service Worker学习小结">
+<meta property="og:url" content="http://yoursite.com/2019/07/04/Service-Worker学习小结/index.html">
+<meta property="og:site_name" content="Rin&#39;s blog">
+<meta property="og:description" content="什么是 Service WorkerService Worker 是一段运行在浏览器后台中的脚本，它独立于当前页面，提供了那些不需要与web页面交互的功能在网页背后悄悄执行的能力。 [1] Service Worker 是 PWA 当中的一部分，它是一个可编程的网络代理，可以控制 Web 页面的所有网络请求。 Service Worker 独立于 JavaScript 主进程，它无法直接访问 DO">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/2019/07/04/Service-Worker学习小结/images/0704/service%20worker生命周期.png">
+<meta property="og:updated_time" content="2019-07-04T09:30:30.103Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Service Worker学习小结">
+<meta name="twitter:description" content="什么是 Service WorkerService Worker 是一段运行在浏览器后台中的脚本，它独立于当前页面，提供了那些不需要与web页面交互的功能在网页背后悄悄执行的能力。 [1] Service Worker 是 PWA 当中的一部分，它是一个可编程的网络代理，可以控制 Web 页面的所有网络请求。 Service Worker 独立于 JavaScript 主进程，它无法直接访问 DO">
+<meta name="twitter:image" content="http://yoursite.com/2019/07/04/Service-Worker学习小结/images/0704/service%20worker生命周期.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Rin&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Rin&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Service-Worker学习小结" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/07/04/Service-Worker学习小结/" class="article-date">
+  <time datetime="2019-07-04T08:42:44.000Z" itemprop="datePublished">2019-07-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Service Worker学习小结
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="什么是-Service-Worker"><a href="#什么是-Service-Worker" class="headerlink" title="什么是 Service Worker"></a>什么是 Service Worker</h2><p>Service Worker 是一段运行在浏览器后台中的脚本，它独立于当前页面，提供了那些不需要与web页面交互的功能在网页背后悄悄执行的能力。 <sub>[1]</sub> Service Worker 是 PWA 当中的一部分，它是一个可编程的网络代理，可以控制 Web 页面的所有网络请求。 Service Worker 独立于 JavaScript 主进程，它无法直接访问 DOM 和 window 对象。Service Worker具有以下作用：</p>
+<ul>
+<li>浏览器缓存</li>
+<li>消息推送</li>
+<li>实现离线 Web App</li>
+</ul>
+<p>Service Worker 具有独立的生命周期， 如下图所示：</p>
+<p><img src="./images/0704/service worker生命周期.png" alt="avatar"></p>
+<p>Service Worker 具有下载、安装、激活三个生命周期。在下载</p>
+<p>图片来自 [<a href="https://juejin.im/post/5b0f9e50518825155911e7be]" target="_blank" rel="noopener">https://juejin.im/post/5b0f9e50518825155911e7be]</a></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p>[1] Service Worker 入门 [<a href="https://www.w3ctech.com/topic/866]" target="_blank" rel="noopener">https://www.w3ctech.com/topic/866]</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="cjxogql8n00018suomikuaq2j" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/06/30/docker基础学习/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">docker基础学习</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/07/04/Service-Worker学习小结/">Service Worker学习小结</a>
+          </li>
+        
+          <li>
+            <a href="/2019/06/30/docker基础学习/">docker基础学习</a>
+          </li>
+        
+          <li>
+            <a href="/2019/06/21/grid布局/">grid布局</a>
+          </li>
+        
+          <li>
+            <a href="/2019/06/13/节流和防抖函数/">节流和防抖函数</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 Rin&#39;s blog<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
