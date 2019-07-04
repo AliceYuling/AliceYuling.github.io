@@ -102,7 +102,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="cjxohskrp000184uods7q5ehq" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="cjxohtm150000l8uodwdu3doc" class="article-share-link">Share</a>
       
       
     </footer>
@@ -145,7 +145,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/30/docker基础学习/" data-id="cjxohskrk000084uouti8zxms" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/30/docker基础学习/" data-id="cjxohtm1d0002l8uotzampvem" class="article-share-link">Share</a>
       
       
     </footer>
@@ -188,23 +188,23 @@
 <p> <code>grid-template-rows</code>, <code>grid-template-columns</code> 分别用于设置各行和各列的行高、列宽，其值可以是 <code>px</code>、百分比或者 <code>fr</code>。 <code>fr</code> 是网格布局中的一个布局单位，用于在一系列长度空间中分配剩余空间, 如指定 <code>grid-template-columns: 100px 2rf 1fr;</code>, 那么在除去第一列的剩余空间中分配第二列与第三列的宽度，第二列的宽度是第三列的两倍。</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-template-rows</span>: <span class="number">100px</span> <span class="number">100px</span> <span class="number">100px</span>;</span><br><span class="line">  <span class="attribute">grid-template-columns</span>: <span class="number">100px</span> <span class="number">100px</span> <span class="number">100px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>给container添加以上样式后，效果如下：</p>
-<p><img src="./images/0621/1-1.PNG" alt="avatar"></p>
+<p><img src="/images/0621/1-1.PNG" alt="avatar"></p>
 <p>使用 <code>fr</code> :</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-template-rows</span>: <span class="number">200px</span> <span class="number">1</span>fr <span class="number">2</span>fr;</span><br><span class="line">  <span class="attribute">grid-template-columns</span>: <span class="number">2</span>fr <span class="number">1</span>fr <span class="number">1</span>fr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="./images/0621/1-2.PNG" alt="avatar"></p>
+<p><img src="/images/0621/1-2.PNG" alt="avatar"></p>
 <p>如果有多行或者多列的话，重复写各行/列的值可能比较麻烦，这时候可以使用 <code>repeat</code> 函数，其第一个参数是要重复的次数，后面的参数是要重复的值：</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-template-rows</span>: <span class="built_in">repeat</span>(3, 100px);</span><br><span class="line">  <span class="attribute">grid-template-columns</span>: <span class="built_in">repeat</span>(2, 60px 80px);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="./images/0621/1-3.PNG" alt="avatar"></p>
+<p><img src="/images/0621/1-3.PNG" alt="avatar"></p>
 <p>使用 <code>grid-auto-flow</code> 属性可以指定各个项目元素排列的顺序，取值可以是 <code>row</code> 或 <code>column</code>:</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-template-rows</span>: <span class="built_in">repeat</span>(3, 100px);</span><br><span class="line">  <span class="attribute">grid-template-columns</span>: <span class="built_in">repeat</span>(3, 100px);</span><br><span class="line">  <span class="attribute">grid-auto-flow</span>: column;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="./images/0621/1-4.PNG" alt="avatar"></p>
+<p><img src="/images/0621/1-4.PNG" alt="avatar"></p>
 <h3 id="1-2-grid-column-gap-grid-row-gap"><a href="#1-2-grid-column-gap-grid-row-gap" class="headerlink" title="1.2 grid-column-gap, grid-row-gap"></a>1.2 <code>grid-column-gap</code>, <code>grid-row-gap</code></h3><p>这两个属性用于设置行、列之间的间距。也可用 <code>grid-gap</code> 同时设置这两个属性，用法为：</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-gap</span>: &lt;grid-row-gap&gt; &lt;grid-column-gap&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="1-3-项目对齐"><a href="#1-3-项目对齐" class="headerlink" title="1.3 项目对齐"></a>1.3 项目对齐</h3><p><code>justify-items</code> 和 <code>align-items</code> 分别用于设置沿着行和列对齐网格项的方式，可取值：</p>
 <p><code>start</code>：将网格项对齐到其单元格的左侧起始边缘（左侧对齐）<br><code>end</code>：将网格项对齐到其单元格的右侧结束边缘（右侧对齐）<br><code>center</code>：将网格项对齐到其单元格的水平中间位置（水平居中对齐）<br><code>stretch</code>：填满单元格的宽度（默认值）</p>
 <p>示例：</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-template-rows</span>: <span class="built_in">repeat</span>(3, 100px);</span><br><span class="line">  <span class="attribute">grid-template-columns</span>: <span class="built_in">repeat</span>(3, 100px);</span><br><span class="line">  <span class="attribute">align-items</span>: end;</span><br><span class="line">  <span class="attribute">justify-items</span>: center;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="./images/0621/1-5.PNG" alt="avatar"></p>
+<p><img src="/images/0621/1-5.PNG" alt="avatar"></p>
 <p><code>place-items</code> 属性是 <code>justify-items</code> 和 <code>align-items</code> 属性的简写，写法为：</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">place-items</span>: &lt;<span class="selector-tag">align-items</span>&gt; &lt;<span class="selector-tag">justify-items</span>&gt;;</span><br></pre></td></tr></table></figure>
 <h2 id="项目属性"><a href="#项目属性" class="headerlink" title="项目属性"></a>项目属性</h2><p>项目属性设置在各个网格元素上。主要有以下属性：</p>
@@ -214,7 +214,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/21/grid布局/" data-id="cjxohskrq000284uowmvqi5zc" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/21/grid布局/" data-id="cjxohtm1b0001l8uo1zvwvcuj" class="article-share-link">Share</a>
       
       
     </footer>
@@ -270,7 +270,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/13/节流和防抖函数/" data-id="cjxohskrs000384uotm992yfr" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/13/节流和防抖函数/" data-id="cjxohtm1e0003l8uov3754k79" class="article-share-link">Share</a>
       
       
     </footer>
