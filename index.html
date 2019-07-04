@@ -94,15 +94,22 @@
 <p><img src="/images/0704/service worker生命周期.png" alt="avatar"></p>
 <p>Service Worker 具有下载、安装、激活三个生命周期。</p>
 <ul>
-<li>下载： 用户首次访问Service Worker控制的网站时，Serivce Worker会被下载</li>
+<li><p>下载： 用户首次访问Service Worker控制的网站时，Serivce Worker会被下载</p>
+</li>
+<li><p>安装：下载完成后，开始安装阶段，通常在安装阶段进行一些资源的加载和缓存</p>
+</li>
+<li><p>激活： 安装完成后，开始激活 Service Worker，这个阶段可以对之前缓存的资源的管理。激活之后，Service Worker 即开始对其所属范围内的页面进行控制。</p>
+</li>
 </ul>
 <p>图片来自 [<a href="https://juejin.im/post/5b0f9e50518825155911e7be]" target="_blank" rel="noopener">https://juejin.im/post/5b0f9e50518825155911e7be]</a></p>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 注册一个 Service Worker</span></span><br><span class="line"><span class="keyword">if</span> (<span class="string">'serviceWorker'</span> <span class="keyword">in</span> navigator) &#123;</span><br><span class="line">  navigator.serviceWorker.register(<span class="string">'sw.js'</span>).then(<span class="function"><span class="params">reg</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'successs'</span>, reg);</span><br><span class="line">  &#125;).catch(<span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'fail'</span>, err);</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> cacheStorageKey = <span class="string">'caches'</span>;</span><br><span class="line"><span class="comment">// 需要缓存的资源列表</span></span><br><span class="line"><span class="keyword">var</span> cacheList = [</span><br><span class="line">  <span class="string">'/'</span>,</span><br><span class="line">  <span class="string">'./index.html'</span>,</span><br><span class="line">  <span class="string">'./test.jpg'</span>,</span><br><span class="line">  <span class="string">'./favicon.png'</span></span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 浏览器解析完sw文件触发install事件</span></span><br><span class="line">self.addEventListener(<span class="string">'install'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">  e.waitUntil(</span><br><span class="line">    caches.open(cacheStorageKey).then(<span class="function"><span class="keyword">function</span>(<span class="params">cache</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> cache.addAll(cacheList);</span><br><span class="line">    &#125;)</span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 激活</span></span><br><span class="line">self.addEventListener(<span class="string">'activate'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">  e.waitUntil(</span><br><span class="line">    caches.keys().then(<span class="function"><span class="keyword">function</span>(<span class="params">cacheNames</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">Promise</span>.all(</span><br><span class="line">        cacheNames.map(<span class="function"><span class="keyword">function</span>(<span class="params">cacheName</span>) </span>&#123;</span><br><span class="line">          <span class="comment">// 如果当前版本和缓存版本不一致</span></span><br><span class="line">          <span class="keyword">if</span> (cacheName !== cacheStorageKey) &#123;</span><br><span class="line">            <span class="keyword">return</span> caches.delete(cacheName);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">      );</span><br><span class="line">    &#125;)</span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 捕获请求并返回缓存数据</span></span><br><span class="line">self.addEventListener(<span class="string">'fetch'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">  e.respondWith(</span><br><span class="line">    caches.match(e.request).then(<span class="function"><span class="keyword">function</span>(<span class="params">response</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (response) &#123;</span><br><span class="line">        <span class="keyword">return</span> response;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> fetch(e.request);</span><br><span class="line">    &#125;).catch(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(e.request.url)</span><br><span class="line">    &#125;)</span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p>[1] Service Worker 入门 [<a href="https://www.w3ctech.com/topic/866]" target="_blank" rel="noopener">https://www.w3ctech.com/topic/866]</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="cjxohutub00034suomybtqktt" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="cjxon6ax80000i4uo3fl2cg2f" class="article-share-link">Share</a>
       
       
     </footer>
@@ -145,7 +152,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/30/docker基础学习/" data-id="cjxohutu400004suoypsq1tgw" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/30/docker基础学习/" data-id="cjxon6axi0002i4uoald4b373" class="article-share-link">Share</a>
       
       
     </footer>
@@ -214,7 +221,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/21/grid布局/" data-id="cjxohutu800014suocf2jh0r3" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/21/grid布局/" data-id="cjxon6axj0003i4uoyczlks67" class="article-share-link">Share</a>
       
       
     </footer>
@@ -270,7 +277,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/13/节流和防抖函数/" data-id="cjxohutua00024suo81nz6g84" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/13/节流和防抖函数/" data-id="cjxon6axf0001i4uo983qdfpn" class="article-share-link">Share</a>
       
       
     </footer>
