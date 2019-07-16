@@ -14,7 +14,7 @@
 <meta property="og:site_name" content="Rin&#39;s blog">
 <meta property="og:description" content="客户端在向服务端请求资源的时候，由于有些资源是需要用户身份才能拿到的，这时候就要进行用户身份认证。而HTTP协议是无状态的，即当一个客户端请求发送给服务器的时候，服务器并不知道上一次发送请求的客户端的身份。每次发送请求都必须重新登录进行身份，要解决这个问题，常见的方案有基于会话的身份验证方案和基于Token的身份验证方案。 传统身份验证的方法传统的用户身份认证基于会话。用户请求登录时，服务端经过验">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-07-16T09:46:51.248Z">
+<meta property="og:updated_time" content="2019-07-16T09:48:11.475Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于Token的身份验证方案">
 <meta name="twitter:description" content="客户端在向服务端请求资源的时候，由于有些资源是需要用户身份才能拿到的，这时候就要进行用户身份认证。而HTTP协议是无状态的，即当一个客户端请求发送给服务器的时候，服务器并不知道上一次发送请求的客户端的身份。每次发送请求都必须重新登录进行身份，要解决这个问题，常见的方案有基于会话的身份验证方案和基于Token的身份验证方案。 传统身份验证的方法传统的用户身份认证基于会话。用户请求登录时，服务端经过验">
@@ -118,7 +118,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;alg&quot;: &quot;HS256&quot;,</span><br><span class="line">  &apos;typ: &quot;JWT&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>将此JSON对象使用 base64 算法转换为字符串即为 JWT header。</p>
 <p>Payload 是 JWT 的主体内容部分， 也是一个 JSON 对象，其中包含了需要传递的数据，如发行人、到期时间、发布时间等。</p>
-<p><code>`</code><br>{<br>  “iss”：”发行人”,<br>  “exp”：”到期时间”,<br>  “sub”：”主题”,<br>  “aud”：”用户”,<br>  “nbf”：”在此之前不可用”,<br>  “iat”：”发布时间”,<br>  “jti”：”JWT ID用于标识该JWT”<br>}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;iss&quot;：&quot;发行人&quot;,</span><br><span class="line">  &quot;exp&quot;：&quot;到期时间&quot;,</span><br><span class="line">  &quot;sub&quot;：&quot;主题&quot;,</span><br><span class="line">  &quot;aud&quot;：&quot;用户&quot;,</span><br><span class="line">  &quot;nbf&quot;：&quot;在此之前不可用&quot;,</span><br><span class="line">  &quot;iat&quot;：&quot;发布时间&quot;,</span><br><span class="line">  &quot;jti&quot;：&quot;JWT ID用于标识该JWT&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>除了以上七个 JWT 定义的默认的字段外，还可自定义字段。 同样使用 base64 算法转换成字符串后即为 JWT 的 payload 部分。</p>
 <p>Signature 是签名部分，对 header 和 payload 通过指定的算法加密后生成，在加密时指定一个 密钥（secret）， 该密钥存储在服务器中不得向用户公开。</p>
 <p>以上三部分分别计算出后，使用 <code>.</code> 号分隔组合成的字符串即为 JWT token。</p>
@@ -128,7 +128,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/16/基于Token的身份验证方案/" data-id="cjy5mue1n0001gsuobnnzvd6o" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/16/基于Token的身份验证方案/" data-id="cjy5mw81d0004wcuotqzuhx6o" class="article-share-link">Share</a>
       
       
     </footer>
