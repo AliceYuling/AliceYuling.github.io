@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>web安全之CSRF攻击 | Rin&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="什么是 CSRF跨站请求伪造(Cross-Site Request Forery), 通常缩写为 CSRF 或 XSRF, 是指一种恶意的网站应用，通过伪装成受信任用户的请求来利用受信任的网站完成攻击。 CSRF 基本流程 用户登录 A 网站 a.com 用户在保持 A 网站登陆状态的同时，受引访问了 B 网站 b.com B 网站向 A 网站发送请求，如 a.com?action=xxx, 其请">
+<meta property="og:type" content="article">
+<meta property="og:title" content="web安全之CSRF攻击">
+<meta property="og:url" content="http://yoursite.com/2019/07/17/web安全之CSRF攻击/index.html">
+<meta property="og:site_name" content="Rin&#39;s blog">
+<meta property="og:description" content="什么是 CSRF跨站请求伪造(Cross-Site Request Forery), 通常缩写为 CSRF 或 XSRF, 是指一种恶意的网站应用，通过伪装成受信任用户的请求来利用受信任的网站完成攻击。 CSRF 基本流程 用户登录 A 网站 a.com 用户在保持 A 网站登陆状态的同时，受引访问了 B 网站 b.com B 网站向 A 网站发送请求，如 a.com?action=xxx, 其请">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/images/0717/CSRF.png">
+<meta property="og:updated_time" content="2019-07-23T11:02:21.970Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="web安全之CSRF攻击">
+<meta name="twitter:description" content="什么是 CSRF跨站请求伪造(Cross-Site Request Forery), 通常缩写为 CSRF 或 XSRF, 是指一种恶意的网站应用，通过伪装成受信任用户的请求来利用受信任的网站完成攻击。 CSRF 基本流程 用户登录 A 网站 a.com 用户在保持 A 网站登陆状态的同时，受引访问了 B 网站 b.com B 网站向 A 网站发送请求，如 a.com?action=xxx, 其请">
+<meta name="twitter:image" content="http://yoursite.com/images/0717/CSRF.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Rin&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Rin&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-web安全之CSRF攻击" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/07/17/web安全之CSRF攻击/" class="article-date">
+  <time datetime="2019-07-17T02:12:12.000Z" itemprop="datePublished">2019-07-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      web安全之CSRF攻击
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="什么是-CSRF"><a href="#什么是-CSRF" class="headerlink" title="什么是 CSRF"></a>什么是 <code>CSRF</code></h2><p>跨站请求伪造(Cross-Site Request Forery), 通常缩写为 <code>CSRF</code> 或 <code>XSRF</code>, 是指一种恶意的网站应用，通过伪装成受信任用户的请求来利用受信任的网站完成攻击。</p>
+<h2 id="CSRF-基本流程"><a href="#CSRF-基本流程" class="headerlink" title="CSRF 基本流程"></a><code>CSRF</code> 基本流程</h2><ul>
+<li>用户登录 A 网站 <code>a.com</code></li>
+<li>用户在保持 A 网站登陆状态的同时，受引访问了 B 网站 <code>b.com</code></li>
+<li>B 网站向 A 网站发送请求，如 <code>a.com?action=xxx</code>, 其请求中往往带有一些有损 A 网站用户或者窃取信息等的操作</li>
+<li>A 网站在收到 B 网站发来的请求后，此时由于A 网站用户的登录凭证还保留在 <code>cookie</code>中，A 网站默认使用受害用户的 cookie</li>
+<li>A 网站以受害用户的名义执行了攻击者请求中的操作，CSRF 攻击完成</li>
+</ul>
+<p>下图描述了 <code>CSRF</code> 的基本流程(图源见水印)</p>
+<p><img src="/images/0717/CSRF.png" alt="avatar"></p>
+<h2 id="如何防范-CSRF-攻击"><a href="#如何防范-CSRF-攻击" class="headerlink" title="如何防范 CSRF 攻击"></a>如何防范 <code>CSRF</code> 攻击</h2><h3 id="设置-Referer-header"><a href="#设置-Referer-header" class="headerlink" title="设置 Referer header"></a>设置 Referer header</h3><p><code>CSRF</code> 攻击只能通过冒用他人 cookie 而不能读取 cookie。针对该特点，可以通过同源检测来防范 <code>CSRF</code> 攻击。</p>
+<p>Http 请求头中有一个名为 <code>referer</code> 的字段，这个字段的作用提供访问来源，即告诉服务器当前请求是从哪个页面链接过来的。利用 <code>referer</code>, 服务器可以判断发起请求的来源，阻止不可信的外域请求。</p>
+<p>但是这种方法也并不是完美的，它具有以下缺点：</p>
+<ul>
+<li><p><code>Referer</code> 在各浏览器的实现不尽相同，难以保证浏览器本身没有安全漏洞</p>
+</li>
+<li><p>用户可能自己设置浏览器使其在发送请求时不带 referer，这种情况下，当他们访问网站时，网站会因为其没有 <code>referer</code> 而认为是 <code>CSRF</code> 攻击，从而阻挡掉一部分正常用户的请求。</p>
+</li>
+</ul>
+<h3 id="请求时附加额外信息进行验证"><a href="#请求时附加额外信息进行验证" class="headerlink" title="请求时附加额外信息进行验证"></a>请求时附加额外信息进行验证</h3><p>同样的利用<code>CSRF</code> 攻击只能通过冒用他人 cookie 而不能读取用户信息如 cookie 的特点，<code>CSRF</code> 攻击主要是因为服务器把攻击者的请求当成了是安全用户的请求。那么如果要求用户请求时带上一些额外的验证信息，如 <code>token</code>，那么服务器在接收到请求时，便可以通过判断 token 是否有效来验证请求是否安全。关于 <code>token</code> 认证具体原理与流程可参考上一篇博客。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/07/17/web安全之CSRF攻击/" data-id="cjyfkuzk400033cuobm96qnqz" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/07/16/基于Token的身份验证方案/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">基于Token的身份验证方案</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/07/17/web安全之CSRF攻击/">web安全之CSRF攻击</a>
+          </li>
+        
+          <li>
+            <a href="/2019/07/16/基于Token的身份验证方案/">基于Token的身份验证方案</a>
+          </li>
+        
+          <li>
+            <a href="/2019/07/14/深度优先算法实现深拷贝/">深度优先算法和广度优先算法实现深拷贝</a>
+          </li>
+        
+          <li>
+            <a href="/2019/07/04/Service-Worker学习小结/">Service Worker学习小结</a>
+          </li>
+        
+          <li>
+            <a href="/2019/06/30/docker基础学习/">docker基础学习</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 Rin&#39;s blog<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
