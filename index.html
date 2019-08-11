@@ -62,6 +62,77 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-element源码学习" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/08/09/element源码学习/" class="article-date">
+  <time datetime="2019-08-09T07:33:13.000Z" itemprop="datePublished">2019-08-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/08/09/element源码学习/">element源码学习之clickoutside</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>clickoutside是element-ui中的一个指令, 用于在点击绑定元素外部时，执行指定的操作。主要原理是监听 <code>mouseup</code> 和 <code>mousedown</code> 事件，在 <code>mouseup</code>时，如果判断到事件所在元素不属于指令所绑定的元素，则执行指令绑定的回调方法。</p>
+<p>来看看源码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">'vue'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// on 是element中封装的一个方法，兼容不同浏览器及服务器端的事件监听</span></span><br><span class="line"><span class="keyword">import</span> &#123; on &#125; <span class="keyword">from</span> <span class="string">'element-ui/src/utils/dom'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// nodeList 存放所有绑定了clickoutside指令的元素</span></span><br><span class="line"><span class="keyword">const</span> nodeList = [];</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> ctx = <span class="string">'@@clickoutsideContext'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> startClick;</span><br><span class="line"><span class="keyword">let</span> seed = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 鼠标按下时，startClick 存储 mousedown 事件</span></span><br><span class="line">!Vue.prototype.$isServer &amp;&amp; on(<span class="built_in">document</span>, <span class="string">'mousedown'</span>, e =&gt; (startClick = e));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 鼠标松开，对于所有绑定了clickoutside事件的节点，执行节点绑定的回调函数</span></span><br><span class="line">!Vue.prototype.$isServer &amp;&amp; on(<span class="built_in">document</span>, <span class="string">'mouseup'</span>, e =&gt; &#123;</span><br><span class="line">  nodeList.forEach(<span class="function"><span class="params">node</span> =&gt;</span> node[ctx].documentHandler(e, startClick));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>上面这段代码中， <code>Vue.prototype.$isSever</code> 用于判断Vue实例是否运行于服务器。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createDocumentHandler</span>(<span class="params">el, binding, vnode</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">mouseup = &#123;&#125;, mousedown = &#123;&#125;</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!vnode ||</span><br><span class="line">      !vnode.context ||</span><br><span class="line">      !mouseup.target ||</span><br><span class="line">      !mousedown.target ||</span><br><span class="line">      el.contains(mouseup.target) ||</span><br><span class="line">      el.contains(mousedown.target) ||</span><br><span class="line">      el === mouseup.target ||</span><br><span class="line">      (vnode.context.popperElm &amp;&amp;</span><br><span class="line">      (vnode.context.popperElm.contains(mouseup.target) ||</span><br><span class="line">      vnode.context.popperElm.contains(mousedown.target)))) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (binding.expression &amp;&amp;</span><br><span class="line">      el[ctx].methodName &amp;&amp;</span><br><span class="line">      vnode.context[el[ctx].methodName]) &#123;</span><br><span class="line">      vnode.context[el[ctx].methodName]();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      el[ctx].bindingFn &amp;&amp; el[ctx].bindingFn();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>createDocumentHandler</code> 判断需要执行回调的情形，并为指令绑定的节点添加回调方法。判断的情形如下：</p>
+<ul>
+<li><p><code>!vnode.context</code>：不存在则退出</p>
+</li>
+<li><p><code>!mouseup.target</code>: 未触发点击事件，退出</p>
+</li>
+<li><p><code>!mousedown.target</code>： 未触发点击事件，退出</p>
+</li>
+<li><p><code>el.contains(mouseup.target)</code>, <code>el.contains(mousedown.target)</code>: 绑定的元素包含点击的元素，则退出不执行绑定回调方法</p>
+</li>
+<li><p><code>el === mouseup.target</code>: 点击绑定的元素，则不执行绑定的回调方法</p>
+</li>
+<li><p><code>(vnode.context.popperElm &amp;&amp;(vnode.context.popperElm.contains(mouseup.target) ||
+vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下拉菜单上，则退出不执行绑定回调方法</p>
+</li>
+</ul>
+<p>如果点击的事件不是上述情况的话，那么给绑定元素的 <code>ctx</code> 属性添加绑定的回调函数，并执行回调函数。</p>
+<p>最后 export 出去的是指令的配置，主要是其钩子函数：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 指令绑定时调用</span></span><br><span class="line">bind(el, binding, vnode) &#123;</span><br><span class="line">    <span class="comment">// 将绑定该指令的元素添加到nodeList中</span></span><br><span class="line">    nodeList.push(el);</span><br><span class="line">    <span class="comment">// seed作为标识符</span></span><br><span class="line">    <span class="keyword">const</span> id = seed++;</span><br><span class="line">    el[ctx] = &#123;</span><br><span class="line">      id,</span><br><span class="line">      documentHandler: createDocumentHandler(el, binding, vnode),</span><br><span class="line">      methodName: binding.expression,</span><br><span class="line">      bindingFn: binding.value</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">// vNode更新时调用</span></span><br><span class="line">  update(el, binding, vnode) &#123;</span><br><span class="line">    el[ctx].documentHandler = createDocumentHandler(el, binding, vnode);</span><br><span class="line">    el[ctx].methodName = binding.expression;</span><br><span class="line">    el[ctx].bindingFn = binding.value;</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 指令与元素解绑时调用</span></span><br><span class="line">  <span class="comment">// 解绑时，将元素从nodeList中删除</span></span><br><span class="line">  unbind(el) &#123;</span><br><span class="line">    <span class="keyword">let</span> len = nodeList.length;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (nodeList[i][ctx].id === el[ctx].id) &#123;</span><br><span class="line">        nodeList.splice(i, <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">delete</span> el[ctx];</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>在元素绑定指令时，即给元素的ctx属性赋了一个对象，这个对象具有以下属性：</p>
+<ul>
+<li><p><code>id</code>：给绑定元素的一个唯一的标识符</p>
+</li>
+<li><p><code>documentHandler</code>: 即前面createDocumentHandler所返回的函数，如前，在 <code>mouseup</code>触发时便会去遍历绑定元素去执行 <code>documentHandler</code></p>
+</li>
+<li><p><code>methodName</code>: 指令绑定的expression</p>
+</li>
+<li><p><code>bindingFn</code>: 指令绑定的value</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/08/09/element源码学习/" data-id="cjz6yqlqj0003pouozu4fysy9" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-web安全之xss攻击" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/08/05/web安全之xss攻击/" class="article-date">
@@ -88,7 +159,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/05/web安全之xss攻击/" data-id="cjyxqrdqz0001gwuogy1081dp" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/08/05/web安全之xss攻击/" data-id="cjz6yqlql0004pouotwzav2sv" class="article-share-link">Share</a>
       
       
     </footer>
@@ -144,7 +215,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/17/web安全之CSRF攻击/" data-id="cjyxqrdr70004gwuoff6s4aj4" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/17/web安全之CSRF攻击/" data-id="cjz6yqlqc0001pouoevn9lpdu" class="article-share-link">Share</a>
       
       
     </footer>
@@ -218,7 +289,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/16/基于Token的身份验证方案/" data-id="cjyxqrdri0005gwuoxcubpsog" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/16/基于Token的身份验证方案/" data-id="cjz6yqlqp0006pouorz4mkvwu" class="article-share-link">Share</a>
       
       
     </footer>
@@ -261,7 +332,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/14/深度优先算法实现深拷贝/" data-id="cjyxqrdrk0006gwuo2xyndory" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/14/深度优先算法实现深拷贝/" data-id="cjz6yqlqr0007pouoy2i56l03" class="article-share-link">Share</a>
       
       
     </footer>
@@ -318,7 +389,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="cjyxqrdr00002gwuozjnoxuba" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="cjz6yqlqg0002pouoy78vbh5k" class="article-share-link">Share</a>
       
       
     </footer>
@@ -361,7 +432,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/30/docker基础学习/" data-id="cjyxqrdr20003gwuo2qz5a3s4" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/30/docker基础学习/" data-id="cjz6yqlq10000pouoo80a5j02" class="article-share-link">Share</a>
       
       
     </footer>
@@ -430,7 +501,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/21/grid布局/" data-id="cjyxqrdqt0000gwuo1rbhvxaf" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/21/grid布局/" data-id="cjz6yqlqn0005pouoxql5eohn" class="article-share-link">Share</a>
       
       
     </footer>
@@ -486,7 +557,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/13/节流和防抖函数/" data-id="cjyxqrdrl0007gwuo5vlkl508" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/13/节流和防抖函数/" data-id="cjz6yqlqt0008pouos6tkchcw" class="article-share-link">Share</a>
       
       
     </footer>
@@ -527,6 +598,10 @@
       <ul>
         
           <li>
+            <a href="/2019/08/09/element源码学习/">element源码学习之clickoutside</a>
+          </li>
+        
+          <li>
             <a href="/2019/08/05/web安全之xss攻击/">web安全之xss攻击</a>
           </li>
         
@@ -540,10 +615,6 @@
         
           <li>
             <a href="/2019/07/14/深度优先算法实现深拷贝/">深度优先算法和广度优先算法实现深拷贝</a>
-          </li>
-        
-          <li>
-            <a href="/2019/07/04/Service-Worker学习小结/">Service Worker学习小结</a>
           </li>
         
       </ul>
