@@ -123,7 +123,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/09/element源码学习/" data-id="cjz6yqlqj0003pouozu4fysy9" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/08/09/element源码学习/" data-id="cjzf04cme0002dguofsf7ajz9" class="article-share-link">Share</a>
       
       
     </footer>
@@ -155,11 +155,33 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>上篇blog学习了web安全领域中的 CSRF 攻击，这篇来说一下 XSS。</p>
+<p>XSS（Cross Site Script）又名跨站脚本攻击，是攻击者在网页上注入恶意的客户端脚本，通过恶意的脚本篡改客户端网页，从而导致用户隐私泄露或用户浏览器被控制。</p>
+<h2 id="XSS-攻击的方式"><a href="#XSS-攻击的方式" class="headerlink" title="XSS 攻击的方式"></a>XSS 攻击的方式</h2><p>XSS可能的攻击方式有：</p>
+<ol>
+<li>将包含攻击脚本的恶意url包装在图片、游戏外挂或其他具有诱惑力的内容中，当用户点击这个恶意url，其中的脚本被执行即产生了XSS攻击。</li>
+</ol>
+<p>例如，现在网页上有个链接，其指向地址为 <code>xxx.com?a=b</code>, 用户访问这个链接即向XSS攻击后台服务器发起一个请求，服务器收到请求后返回一段攻击代码，客户端收到返回的恶意代码后在网页执行即完成了一次攻击。</p>
+<ol start="2">
+<li>将对客户端的攻击脚本植入到服务器上，那么每个正常访问该页面的用户都会受到攻击。</li>
+</ol>
+<p>例如，当用户提交内容时，服务端监听用户提交，在用户提交时将用户填入的信息保存在服务端，在用户正常访问这个页面时，服务端返回之前用户提交的信息。那么如果用户提交的是一段恶意代码，这段恶意代码就会被保存在服务器端并在所有用户访问这个页面时被执行。</p>
+<p>XSS 攻击还有其他方式，如改变页面中某个结构在其中嵌入代码。总结起来就是通过各种方式将可执行脚本植入页面中。</p>
+<h2 id="XSS的防御"><a href="#XSS的防御" class="headerlink" title="XSS的防御"></a>XSS的防御</h2><ol>
+<li>任何用户的输入都是不可信的，对用户的输入需要做过滤、转义。例如 <code>&lt;script&gt;</code>需要对 <code>&lt;</code> 和 <code>&gt;</code> 做转义。</li>
+</ol>
+<p>当然，用户输入也不止输入框一种形式，还有诸如 <code>xxx.com?a=b&amp;c=d</code>这种通过 url 中查询参数等形式以及post参数等，需要全面考虑各种用户输入的情形。</p>
+<ol start="2">
+<li><p>除了<code>&lt;script&gt;</code>之外，攻击者也有可能通过 html 片段在页面中渲染不安全的内容。例如使用 <code>span</code>、<code>p</code>标签等渲染不安全的内容，在 <code>input</code>输入中放置不安全的 <code>value</code>等，在 <code>a</code>标签中植入不安全的链接等。 那么就需要做html编码、url校验与安全性认证等工作去防御 xss 攻击。</p>
+</li>
+<li><p>对服务端的输出，除了富文本输出外，也需要做过滤与转义之后再输出到页面中。</p>
+</li>
+</ol>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/05/web安全之xss攻击/" data-id="cjz6yqlql0004pouotwzav2sv" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/08/05/web安全之xss攻击/" data-id="cjzf04cmk0005dguoh32dfygs" class="article-share-link">Share</a>
       
       
     </footer>
@@ -215,7 +237,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/17/web安全之CSRF攻击/" data-id="cjz6yqlqc0001pouoevn9lpdu" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/17/web安全之CSRF攻击/" data-id="cjzf04cmi0004dguohjbzp90k" class="article-share-link">Share</a>
       
       
     </footer>
@@ -289,7 +311,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/16/基于Token的身份验证方案/" data-id="cjz6yqlqp0006pouorz4mkvwu" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/16/基于Token的身份验证方案/" data-id="cjzf04cml0006dguoz11tvpt4" class="article-share-link">Share</a>
       
       
     </footer>
@@ -332,7 +354,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/14/深度优先算法实现深拷贝/" data-id="cjz6yqlqr0007pouoy2i56l03" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/14/深度优先算法实现深拷贝/" data-id="cjzf04cmn0007dguo38hdv6nd" class="article-share-link">Share</a>
       
       
     </footer>
@@ -389,7 +411,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="cjz6yqlqg0002pouoy78vbh5k" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="cjzf04cm20000dguoioi1cysj" class="article-share-link">Share</a>
       
       
     </footer>
@@ -432,7 +454,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/30/docker基础学习/" data-id="cjz6yqlq10000pouoo80a5j02" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/30/docker基础学习/" data-id="cjzf04cmb0001dguoid7ildc7" class="article-share-link">Share</a>
       
       
     </footer>
@@ -501,7 +523,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/21/grid布局/" data-id="cjz6yqlqn0005pouoxql5eohn" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/21/grid布局/" data-id="cjzf04cmg0003dguoy77obb26" class="article-share-link">Share</a>
       
       
     </footer>
@@ -557,7 +579,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/13/节流和防抖函数/" data-id="cjz6yqlqt0008pouos6tkchcw" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/13/节流和防抖函数/" data-id="cjzf04cmp0008dguo05i76o3w" class="article-share-link">Share</a>
       
       
     </footer>
