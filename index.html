@@ -62,6 +62,60 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Vue源码学习之二" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/08/23/Vue源码学习之二/" class="article-date">
+  <time datetime="2019-08-23T05:44:03.000Z" itemprop="datePublished">2019-08-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/08/23/Vue源码学习之二/">Vue源码学习之二</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本周继续Vue源码的学习。上周主要看了Vue的构造函数，这周主要研究Vue源码构造函数中的初始化方法，即上篇博客中提到的 initMixin, stateMixin, eventsMixin, lifecycleMixin和 renderMixin</p>
+<h2 id="initMixin"><a href="#initMixin" class="headerlink" title="initMixin"></a>initMixin</h2><p>在这里主要是抛出了Vue的初始化方法 <code>_init</code>。 在<code>_init</code>中主要做的有以下几件事：</p>
+<ul>
+<li><p>设置 <code>_uid</code>， 将实例缓存到 <code>vm</code> 中</p>
+</li>
+<li><p>环境变量不是 <code>production</code> 时，测试性能</p>
+</li>
+<li><p>如果 <code>Vue</code> 的初始化选项 <code>options</code> (data、生命周期钩子、methods、mixins等）中有 <code>_isComponent</code>这个选项(用于表明当前实例是否是组件的一个flag)，去优化组件实例</p>
+</li>
+<li><p>否则执行 <code>mergeOptions</code> 这个函数，这个函数的作用是将传入的选项和自身的选项merge</p>
+</li>
+<li><p>在对选项处理完后，去对生命周期、事件等做初始化，并调用 <code>beforeCreate</code> 和 <code>created</code> 钩子函数<br>来看看具体代码：</p>
+</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">initMixin</span> (<span class="params">Vue: Class&lt;Component&gt;</span>) </span>&#123;</span><br><span class="line">  Vue.prototype._init = <span class="function"><span class="keyword">function</span> (<span class="params">options?: Object</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> vm: Component = <span class="keyword">this</span></span><br><span class="line">    <span class="comment">// a uid</span></span><br><span class="line">    vm._uid = uid++</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> startTag, endTag</span><br><span class="line">    <span class="comment">/* istanbul ignore if */</span></span><br><span class="line">    <span class="comment">// 性能优化</span></span><br><span class="line">    <span class="keyword">if</span> (process.env.NODE_ENV !== <span class="string">'production'</span> &amp;&amp; config.performance &amp;&amp; mark) &#123;</span><br><span class="line">      startTag = <span class="string">`vue-perf-start:<span class="subst">$&#123;vm._uid&#125;</span>`</span></span><br><span class="line">      endTag = <span class="string">`vue-perf-end:<span class="subst">$&#123;vm._uid&#125;</span>`</span></span><br><span class="line">      mark(startTag)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// a flag to avoid this being observed</span></span><br><span class="line">    vm._isVue = <span class="literal">true</span></span><br><span class="line">    <span class="comment">// merge options</span></span><br><span class="line">    <span class="comment">// _isComponent 用于标识 Vue 实例是否是组件</span></span><br><span class="line">    <span class="keyword">if</span> (options &amp;&amp; options._isComponent) &#123;</span><br><span class="line">      <span class="comment">// optimize internal component instantiation</span></span><br><span class="line">      <span class="comment">// since dynamic options merging is pretty slow, and none of the</span></span><br><span class="line">      <span class="comment">// internal component options needs special treatment.</span></span><br><span class="line">      <span class="comment">// </span></span><br><span class="line">      initInternalComponent(vm, options)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      vm.$options = mergeOptions(</span><br><span class="line">        resolveConstructorOptions(vm.constructor),</span><br><span class="line">        options || &#123;&#125;,</span><br><span class="line">        vm</span><br><span class="line">      )</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* istanbul ignore else */</span></span><br><span class="line">    <span class="comment">// 如果不是在生产环境，初始化proxy</span></span><br><span class="line">    <span class="keyword">if</span> (process.env.NODE_ENV !== <span class="string">'production'</span>) &#123;</span><br><span class="line">      initProxy(vm)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      vm._renderProxy = vm</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// expose real self</span></span><br><span class="line">    vm._self = vm</span><br><span class="line">    initLifecycle(vm) <span class="comment">// 生命周期相关的初始化</span></span><br><span class="line">    initEvents(vm) <span class="comment">// 事件相关初始化</span></span><br><span class="line">    initRender(vm) <span class="comment">// 渲染相关初始化</span></span><br><span class="line">    callHook(vm, <span class="string">'beforeCreate'</span>) <span class="comment">// 调用beforeCreate</span></span><br><span class="line">    initInjections(vm) <span class="comment">// resolve injections before data/props</span></span><br><span class="line">    initState(vm) <span class="comment">// 初始化data，进行双向绑定</span></span><br><span class="line">    initProvide(vm) <span class="comment">// resolve provide after data/props</span></span><br><span class="line">    callHook(vm, <span class="string">'created'</span>) <span class="comment">// 调用created</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* istanbul ignore if */</span></span><br><span class="line">    <span class="keyword">if</span> (process.env.NODE_ENV !== <span class="string">'production'</span> &amp;&amp; config.performance &amp;&amp; mark) &#123;</span><br><span class="line">      vm._name = formatComponentName(vm, <span class="literal">false</span>)</span><br><span class="line">      mark(endTag)</span><br><span class="line">      measure(<span class="string">`vue <span class="subst">$&#123;vm._name&#125;</span> init`</span>, startTag, endTag)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (vm.$options.el) &#123;</span><br><span class="line">      vm.$mount(vm.$options.el)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>了解了大概的初始化流程之后，来具体看一下相关函数：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">resolveConstructorOptions</span> (<span class="params">Ctor: Class&lt;Component&gt;</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> options = Ctor.options</span><br><span class="line">  <span class="keyword">if</span> (Ctor.super) &#123;</span><br><span class="line">    <span class="keyword">const</span> superOptions = resolveConstructorOptions(Ctor.super)</span><br><span class="line">    <span class="keyword">const</span> cachedSuperOptions = Ctor.superOptions</span><br><span class="line">    <span class="keyword">if</span> (superOptions !== cachedSuperOptions) &#123;</span><br><span class="line">      <span class="comment">// super option changed,</span></span><br><span class="line">      <span class="comment">// need to resolve new options.</span></span><br><span class="line">      Ctor.superOptions = superOptions</span><br><span class="line">      <span class="comment">// check if there are any late-modified/attached options (#4976)</span></span><br><span class="line">      <span class="keyword">const</span> modifiedOptions = resolveModifiedOptions(Ctor)</span><br><span class="line">      <span class="comment">// update base extend options</span></span><br><span class="line">      <span class="keyword">if</span> (modifiedOptions) &#123;</span><br><span class="line">        extend(Ctor.extendOptions, modifiedOptions)</span><br><span class="line">      &#125;</span><br><span class="line">      options = Ctor.options = mergeOptions(superOptions, Ctor.extendOptions)</span><br><span class="line">      <span class="keyword">if</span> (options.name) &#123;</span><br><span class="line">        options.components[options.name] = Ctor</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> options</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>resolveConstructorOptions</code>这个函数用于解析构造函数中的选项 <code>options</code>。<code>Ctor.super</code> 是当 Ctor 是 <code>Vue.extend</code> 构建的子类时，它就会具有 <code>super</code> 这个属性。此时，去对比 Ctor 与其父类的 options ，如果不一样的话，说明父类的 options 已被修改过（比如有mixins），那么就调用 <code>extend</code> 函数将已修改过的部分扩展到 <code>Ctor</code> 的 <code>options</code> 中。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/08/23/Vue源码学习之二/" data-id="cjzr48sp80000jcuo1g3zvptp" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Vue源码学习之一" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/08/17/Vue源码学习之一/" class="article-date">
@@ -113,7 +167,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/17/Vue源码学习之一/" data-id="cjzfcdesn0001swuo548nkfaf" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/08/17/Vue源码学习之一/" data-id="cjzr48spg0002jcuo7fg2aqhw" class="article-share-link">Share</a>
       
       
     </footer>
@@ -184,7 +238,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/09/element源码学习/" data-id="cjzfcdesq0004swuof08x27w7" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/08/09/element源码学习/" data-id="cjzr48spl0006jcuovu6d9x2n" class="article-share-link">Share</a>
       
       
     </footer>
@@ -242,7 +296,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/05/web安全之xss攻击/" data-id="cjzfcdesz0006swuofec7fi9r" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/08/05/web安全之xss攻击/" data-id="cjzr48spj0005jcuoqa2ey7gk" class="article-share-link">Share</a>
       
       
     </footer>
@@ -298,7 +352,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/17/web安全之CSRF攻击/" data-id="cjzfcdesx0005swuoc13eczfw" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/17/web安全之CSRF攻击/" data-id="cjzr48spl0007jcuolncpfcwv" class="article-share-link">Share</a>
       
       
     </footer>
@@ -372,7 +426,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/16/基于Token的身份验证方案/" data-id="cjzfcdet00007swuo0t96fi0z" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/16/基于Token的身份验证方案/" data-id="cjzr48spm0008jcuodpl3s299" class="article-share-link">Share</a>
       
       
     </footer>
@@ -415,7 +469,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/14/深度优先算法实现深拷贝/" data-id="cjzfcdet10008swuongrsok27" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/14/深度优先算法实现深拷贝/" data-id="cjzr48spo0009jcuogao6sf5v" class="article-share-link">Share</a>
       
       
     </footer>
@@ -472,7 +526,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="cjzfcdesj0000swuokmqv63je" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="cjzr48spe0001jcuofausgts9" class="article-share-link">Share</a>
       
       
     </footer>
@@ -515,7 +569,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/30/docker基础学习/" data-id="cjzfcdeso0002swuohvvs2zx9" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/30/docker基础学习/" data-id="cjzr48sph0003jcuo1mepm3jr" class="article-share-link">Share</a>
       
       
     </footer>
@@ -584,63 +638,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/21/grid布局/" data-id="cjzfcdesp0003swuoezdt09g1" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-节流和防抖函数" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/06/13/节流和防抖函数/" class="article-date">
-  <time datetime="2019-06-13T03:34:44.000Z" itemprop="datePublished">2019-06-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/06/13/节流和防抖函数/">节流和防抖函数</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>前两天写轮播图的时候，发现了一个问题就是在快速多次点击翻页按钮的时候，会多次触发翻页函数，此时由于上一次翻页的动画还没结束，就会出现很多问题。这个时候就需要用到节流函数。节流和防抖这两个概念经常都是一起出现的，自己对这两个概念和方法也不是很熟，在这篇博客里就放到一起写了。</p>
-<h2 id="节流-防抖的概念及区别"><a href="#节流-防抖的概念及区别" class="headerlink" title="节流/防抖的概念及区别"></a>节流/防抖的概念及区别</h2><p><strong>节流</strong>(throttle)： 某个函数在一个特定的时间内只执行一次。比如调整窗口大小时，resize事件会持续被触发，使用节流函数可以让其在事件触发期间每间隔一段时间执行一次，而不是每触发一次事件执行一次事件函数。</p>
-<p><strong>防抖</strong>（debounce)： 在事件触发后一段时间t内没检测到事件时则开始执行事件函数，若在t内再次检测到了事件触发那么重新开始计时。也就是防抖是在一个动作结束后才执行。</p>
-<p>下面这张图可以很形象的说明节流和防抖的区别，第一行是正常的事件触发频率，可以看到防抖是把在动作结束后一段时间内未再次检测到事件触发则执行，它可以把函数的多次调用压缩成一次。而节流则相当于减满了函数的执行速度。</p>
-<p><img src="/images/throttle_debounce.png" alt="avatar"></p>
-<p>图片来自 (<a href="http://demo.nimius.net/debounce_throttle/" target="_blank" rel="noopener">http://demo.nimius.net/debounce_throttle/</a>)</p>
-<p>以下可能会高频触发的事件可能会导致页面卡顿、浏览器奔溃等情况出现，如果在事件函数中写了异步操作的话，可能会导致结果和预想的不一样，为了绕开这些问题，可以使用节流/防抖：</p>
-<ul>
-<li>click</li>
-<li>resize</li>
-<li>input</li>
-<li>scroll</li>
-<li>mousemove</li>
-<li>…</li>
-</ul>
-<p>节流比防抖更适合用于一些触发更频繁的场景中，如动画相关的resize/scroll等，而防抖适合用于input/keyup</p>
-<h2 id="节流的实现"><a href="#节流的实现" class="headerlink" title="节流的实现"></a>节流的实现</h2><p>事件触发时，计算这次触发的时间与上次执行函数的时间之差，如果时间差达到设定的时间间隔，则执行这个函数，否则不执行。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  *@param&#123;function&#125; fn 实际要执行的函数</span></span><br><span class="line"><span class="comment">  *@param&#123;Object&#125; context 执行的作用域</span></span><br><span class="line"><span class="comment">  *@param&#123;Number&#125; t 设定的时间间隔</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">throttle</span>(<span class="params">fn, context, t</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> timer = <span class="literal">null</span>;</span><br><span class="line">  <span class="keyword">var</span> startTime = <span class="keyword">new</span> <span class="built_in">Date</span>();</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> context = <span class="keyword">this</span>;</span><br><span class="line">    <span class="keyword">var</span> endTime = <span class="keyword">new</span> <span class="built_in">Date</span>();</span><br><span class="line">    <span class="keyword">var</span> interval = endTime - startTime;</span><br><span class="line">    <span class="keyword">if</span> (interval &gt;= t)&#123;</span><br><span class="line">        fn.call(context);</span><br><span class="line">        <span class="comment">//执行完函数之后重置初始时间，等于最后一次触发的时间</span></span><br><span class="line">        startTime = endTime;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="防抖的实现"><a href="#防抖的实现" class="headerlink" title="防抖的实现"></a>防抖的实现</h2><p>使用定时器，在每次事件触发时，清除定时器，直到设定的时间内没有事件触发，则函数被执行</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  *@param&#123;function&#125; fn 实际要执行的函数</span></span><br><span class="line"><span class="comment">  *@param&#123;Object&#125; context 执行的作用域</span></span><br><span class="line"><span class="comment">  *@param&#123;Number&#125; t 设定的时间间隔</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">debounce</span>(<span class="params">fn, context, t</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> timer = <span class="literal">null</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    clearTimeout(timer);</span><br><span class="line">    timer = setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      fn.call(context);</span><br><span class="line">    &#125;, t);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/13/节流和防抖函数/" data-id="cjzfcdet20009swuo8aro2k9u" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/21/grid布局/" data-id="cjzr48spi0004jcuolmcld1la" class="article-share-link">Share</a>
       
       
     </footer>
@@ -651,6 +649,11 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
 
   
 
+
+  <nav id="page-nav">
+    
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+  </nav>
 
 </section>
         
@@ -681,6 +684,10 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       <ul>
         
           <li>
+            <a href="/2019/08/23/Vue源码学习之二/">Vue源码学习之二</a>
+          </li>
+        
+          <li>
             <a href="/2019/08/17/Vue源码学习之一/">Vue源码学习之一</a>
           </li>
         
@@ -694,10 +701,6 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
         
           <li>
             <a href="/2019/07/17/web安全之CSRF攻击/">web安全之CSRF攻击</a>
-          </li>
-        
-          <li>
-            <a href="/2019/07/16/基于Token的身份验证方案/">基于Token的身份验证方案</a>
           </li>
         
       </ul>
