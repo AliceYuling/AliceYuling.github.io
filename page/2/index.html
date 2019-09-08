@@ -62,6 +62,118 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-docker基础学习" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/06/30/docker基础学习/" class="article-date">
+  <time datetime="2019-06-30T06:48:12.000Z" itemprop="datePublished">2019-06-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/06/30/docker基础学习/">docker基础学习</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><p>Dockers是是一个开源的应用容器引擎，让开发者将应用以及依赖包打包到一个可移植的容器中，然后发布到任何流行的 Linux或Windows 机器上，也可以实现虚拟化。</p>
+<h2 id="docker-镜像"><a href="#docker-镜像" class="headerlink" title="docker 镜像"></a>docker 镜像</h2><p>Docker 镜像是一个特殊的文件系统，除了提供容器运行时所需的程序、库、资源、配置等文件外，还包含了一些为运行时准备的一些配置参数（如匿名卷、环境变量、用户等）。镜像不包含任何动态数据，其内容在构建之后也不会被改变。</p>
+<h2 id="docker-容器"><a href="#docker-容器" class="headerlink" title="docker 容器"></a>docker 容器</h2><p>容器就是将软件打包成标准化单元，以用于开发、交付和部署，是镜像运行的实体。<br>容器和虚机的区别：传统虚拟机技术是虚拟出一套硬件后，在其上运行一个完整操作系统，在该系统上再运行所需应用进程；而容器内的应用进程直接运行于宿主的内核，容器内没有自己的内核，而且也没有进行硬件虚拟。因此容器要比传统虚拟机更为轻便。</p>
+<h2 id="仓库"><a href="#仓库" class="headerlink" title="仓库"></a>仓库</h2><p>Docker Registry 是一个集中的存储、分发镜像的服务。通常，一个仓库会包含同一个软件不同版本的镜像，而标签就常用于对应该软件的各个版本。我们可以通过 &lt;仓库名&gt;:&lt;标签&gt; 的格式来指定具体是这个软件哪个版本的镜像。如果不给出标签，将以 latest 作为默认标签。 </p>
+<p>Docker Registry 公开服务是开放给用户使用、允许用户管理镜像的 Registry 服务。一般这类公开服务允许用户免费上传、下载公开的镜像，并可能提供收费服务供用户管理私有镜像。最常使用的 Registry 公开服务是官方的 Docker Hub，这也是默认的 Registry，并拥有大量的高质量的官方镜像。除此以外，还有 CoreOS 的 Quay.io，CoreOS 相关的镜像存储在这里；Google 的 Google Container Registry，Kubernetes 的镜像使用的就是这个服务。</p>
+<h2 id="常用指令"><a href="#常用指令" class="headerlink" title="常用指令"></a>常用指令</h2><p>对于前端来说，最常用到docker的场景就是打包部署了，常用到以下指令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># 将项目文件打包成镜像</span><br><span class="line">docker build -t &lt;name:tag&gt; .</span><br><span class="line"></span><br><span class="line"># 打tag</span><br><span class="line">docker tag &lt;name:tag&gt; &lt;registry/name:tag&gt;</span><br><span class="line"></span><br><span class="line"># 本地起一个容器测试</span><br><span class="line">docker run -d -p &lt;port&gt; &lt;imageId&gt;</span><br><span class="line"></span><br><span class="line"># 登录registry</span><br><span class="line">docker login &lt;registry&gt;</span><br><span class="line"></span><br><span class="line"># 推送镜像</span><br><span class="line">docker push &lt;registry/name:tag&gt;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/06/30/docker基础学习/" data-id="ck0b883p100056kuomu0hn3kp" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-grid布局" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/06/21/grid布局/" class="article-date">
+  <time datetime="2019-06-21T07:07:51.000Z" itemprop="datePublished">2019-06-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/06/21/grid布局/">grid布局</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Grid（网格）布局，顾名思义，它把页面划分成一个个网格，可以自由控制网格大小、位置以达到不同的布局样式。<br>网格是由一组水平垂直相交的直线所形成的，水平网格线划分出行，垂直网格线划分出列。</p>
+<p>和flex布局类似，grid布局也有容器属性和项目属性这两种属性，在一个元素上应用了 <code>display: grid;</code> 则这个元素为容器元素，其内部的子元素为网格元素。下面将结合以下代码学习网格布局：</p>
+<p>Html如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"container"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item-1"</span>&gt;</span>1<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item-2"</span>&gt;</span>2<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item-3"</span>&gt;</span>3<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item-4"</span>&gt;</span>4<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item-5"</span>&gt;</span>5<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item-6"</span>&gt;</span>6<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item-7"</span>&gt;</span>7<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item-8"</span>&gt;</span>8<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>CSS如下，这里为了方便截图且能看清楚容器大小给容器元素设定了 400px 宽高和边框：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">display</span>: grid;</span><br><span class="line">  <span class="attribute">width</span>: <span class="number">400px</span>;</span><br><span class="line">  <span class="attribute">height</span>: <span class="number">400px</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-id">#container</span> &gt; <span class="selector-tag">div</span> &#123;</span><br><span class="line">  <span class="attribute">width</span>: <span class="number">50px</span>;</span><br><span class="line">  <span class="attribute">height</span>: <span class="number">50px</span>;</span><br><span class="line">  <span class="attribute">color</span>: <span class="number">#fff</span>;</span><br><span class="line">  <span class="attribute">background-color</span>: <span class="number">#8ca0ff</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="1-容器属性"><a href="#1-容器属性" class="headerlink" title="1. 容器属性"></a>1. 容器属性</h2><h3 id="1-1-display"><a href="#1-1-display" class="headerlink" title="1.1 display"></a>1.1 <code>display</code></h3><p><code>display: grid;</code> 指定一个元素采用网格布局。在一个元素上应用了 <code>display: grid;</code> 则这个元素为容器元素，其内部的子元素为网格元素。也可以设定为 <code>display: inline-grid;</code> 则容器元素为行内元素。</p>
+<h3 id="1-1-grid-template"><a href="#1-1-grid-template" class="headerlink" title="1.1 grid-template"></a>1.1 <code>grid-template</code></h3><p><code>grid-template</code> 属性包含 <code>grid-template-rows</code>, <code>grid-template-columns</code> 和 <code>grid-template-areas</code>。</p>
+<p> <code>grid-template-rows</code>, <code>grid-template-columns</code> 分别用于设置各行和各列的行高、列宽，其值可以是 <code>px</code>、百分比或者 <code>fr</code>。 <code>fr</code> 是网格布局中的一个布局单位，用于在一系列长度空间中分配剩余空间, 如指定 <code>grid-template-columns: 100px 2rf 1fr;</code>, 那么在除去第一列的剩余空间中分配第二列与第三列的宽度，第二列的宽度是第三列的两倍。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-template-rows</span>: <span class="number">100px</span> <span class="number">100px</span> <span class="number">100px</span>;</span><br><span class="line">  <span class="attribute">grid-template-columns</span>: <span class="number">100px</span> <span class="number">100px</span> <span class="number">100px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>给container添加以上样式后，效果如下：</p>
+<p><img src="/images/0621/1-1.PNG" alt="avatar"></p>
+<p>使用 <code>fr</code> :</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-template-rows</span>: <span class="number">200px</span> <span class="number">1</span>fr <span class="number">2</span>fr;</span><br><span class="line">  <span class="attribute">grid-template-columns</span>: <span class="number">2</span>fr <span class="number">1</span>fr <span class="number">1</span>fr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/0621/1-2.PNG" alt="avatar"></p>
+<p>如果有多行或者多列的话，重复写各行/列的值可能比较麻烦，这时候可以使用 <code>repeat</code> 函数，其第一个参数是要重复的次数，后面的参数是要重复的值：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-template-rows</span>: <span class="built_in">repeat</span>(3, 100px);</span><br><span class="line">  <span class="attribute">grid-template-columns</span>: <span class="built_in">repeat</span>(2, 60px 80px);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/0621/1-3.PNG" alt="avatar"></p>
+<p>使用 <code>grid-auto-flow</code> 属性可以指定各个项目元素排列的顺序，取值可以是 <code>row</code> 或 <code>column</code>:</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-template-rows</span>: <span class="built_in">repeat</span>(3, 100px);</span><br><span class="line">  <span class="attribute">grid-template-columns</span>: <span class="built_in">repeat</span>(3, 100px);</span><br><span class="line">  <span class="attribute">grid-auto-flow</span>: column;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/0621/1-4.PNG" alt="avatar"></p>
+<h3 id="1-2-grid-column-gap-grid-row-gap"><a href="#1-2-grid-column-gap-grid-row-gap" class="headerlink" title="1.2 grid-column-gap, grid-row-gap"></a>1.2 <code>grid-column-gap</code>, <code>grid-row-gap</code></h3><p>这两个属性用于设置行、列之间的间距。也可用 <code>grid-gap</code> 同时设置这两个属性，用法为：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-gap</span>: &lt;grid-row-gap&gt; &lt;grid-column-gap&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="1-3-项目对齐"><a href="#1-3-项目对齐" class="headerlink" title="1.3 项目对齐"></a>1.3 项目对齐</h3><p><code>justify-items</code> 和 <code>align-items</code> 分别用于设置沿着行和列对齐网格项的方式，可取值：</p>
+<p><code>start</code>：将网格项对齐到其单元格的左侧起始边缘（左侧对齐）<br><code>end</code>：将网格项对齐到其单元格的右侧结束边缘（右侧对齐）<br><code>center</code>：将网格项对齐到其单元格的水平中间位置（水平居中对齐）<br><code>stretch</code>：填满单元格的宽度（默认值）</p>
+<p>示例：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-template-rows</span>: <span class="built_in">repeat</span>(3, 100px);</span><br><span class="line">  <span class="attribute">grid-template-columns</span>: <span class="built_in">repeat</span>(3, 100px);</span><br><span class="line">  <span class="attribute">align-items</span>: end;</span><br><span class="line">  <span class="attribute">justify-items</span>: center;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/0621/1-5.PNG" alt="avatar"></p>
+<p><code>place-items</code> 属性是 <code>justify-items</code> 和 <code>align-items</code> 属性的简写，写法为：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">place-items</span>: &lt;<span class="selector-tag">align-items</span>&gt; &lt;<span class="selector-tag">justify-items</span>&gt;;</span><br></pre></td></tr></table></figure>
+<h2 id="项目属性"><a href="#项目属性" class="headerlink" title="项目属性"></a>项目属性</h2><p>项目属性设置在各个网格元素上。主要有以下属性：</p>
+<p><code>grid-column-start</code>，<code>grid-column-end</code>，<code>grid-row-start</code>，<code>grid-row-end</code> 分别用于指定左边框、右边框、上边框、下边框所在的水平网格线。</p>
+<p><code>justify-self</code>, <code>align-self</code>, <code>place-self</code> 属性和容器属性中的 <code>justify-items</code>， <code>align-items</code>， <code>place-items</code> 属性用法类似，只不过是作用在单个容器元素上。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/06/21/grid布局/" data-id="ck0b883p700086kuo1kk4knq4" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-节流和防抖函数" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/06/13/节流和防抖函数/" class="article-date">
@@ -108,7 +220,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/13/节流和防抖函数/" data-id="cjzr4duux0008kguo9bpw5p69" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/13/节流和防抖函数/" data-id="ck0b883pg000c6kuoa674thw8" class="article-share-link">Share</a>
       
       
     </footer>
@@ -141,7 +253,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li></ul>
     </div>
   </div>
 
@@ -154,6 +266,14 @@
       <ul>
         
           <li>
+            <a href="/2019/09/06/Vue源码学习之三/">Vue源码学习之三</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/06/Vue源码中知识点总结/">Vue源码中知识点总结</a>
+          </li>
+        
+          <li>
             <a href="/2019/08/23/Vue源码学习之二/">Vue源码学习之二</a>
           </li>
         
@@ -163,14 +283,6 @@
         
           <li>
             <a href="/2019/08/09/element源码学习/">element源码学习之clickoutside</a>
-          </li>
-        
-          <li>
-            <a href="/2019/08/05/web安全之xss攻击/">web安全之xss攻击</a>
-          </li>
-        
-          <li>
-            <a href="/2019/07/17/web安全之CSRF攻击/">web安全之CSRF攻击</a>
           </li>
         
       </ul>

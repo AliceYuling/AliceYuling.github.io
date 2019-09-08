@@ -62,6 +62,98 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Vue源码学习之三" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/09/06/Vue源码学习之三/" class="article-date">
+  <time datetime="2019-09-06T08:50:35.000Z" itemprop="datePublished">2019-09-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/09/06/Vue源码学习之三/">Vue源码学习之三</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Vue实例的初始化中stateMixin以及数据双向绑定部分在本次博客中学习。</p>
+<p>来到 <code>src/core/instance/state.js</code> 文件中，这里主要对 Vue 实例选项的 data\watch\computed\props\methods 属性做了初始化：</p>
+<ol>
+<li>props</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">initProps</span> (<span class="params">vm: Component, propsOptions: Object</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 在使用new 创建实例时，使用propsData属性</span></span><br><span class="line">  <span class="keyword">const</span> propsData = vm.$options.propsData || &#123;&#125;</span><br><span class="line">  <span class="keyword">const</span> props = vm._props = &#123;&#125;</span><br><span class="line">  <span class="comment">// cache prop keys so that future props updates can iterate using Array</span></span><br><span class="line">  <span class="comment">// instead of dynamic object key enumeration.</span></span><br><span class="line">  <span class="keyword">const</span> keys = vm.$options._propKeys = []</span><br><span class="line">  <span class="keyword">const</span> isRoot = !vm.$parent</span><br><span class="line">  <span class="comment">// root instance props should be converted</span></span><br><span class="line">  <span class="comment">// 如果没有父组件，则将shouldObserve置为false</span></span><br><span class="line">  <span class="keyword">if</span> (!isRoot) &#123;</span><br><span class="line">    toggleObserving(<span class="literal">false</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> key <span class="keyword">in</span> propsOptions) &#123;</span><br><span class="line">    keys.push(key)</span><br><span class="line">    <span class="comment">// validateProp设置默认值</span></span><br><span class="line">    <span class="comment">// 当default为undefined时，需要去observe</span></span><br><span class="line">    <span class="keyword">const</span> value = validateProp(key, propsOptions, propsData, vm)</span><br><span class="line">    <span class="comment">/* istanbul ignore else */</span></span><br><span class="line">    <span class="keyword">if</span> (process.env.NODE_ENV !== <span class="string">'production'</span>) &#123;</span><br><span class="line">      <span class="comment">// hyphenate将驼峰转换为-格式</span></span><br><span class="line">      <span class="keyword">const</span> hyphenatedKey = hyphenate(key)</span><br><span class="line">      <span class="comment">// isReservedAttribute检查是否是保留字（key,ref,slot,slot-scope,is）</span></span><br><span class="line">      <span class="comment">// config.isReservedAttr: 检查是否是boolean</span></span><br><span class="line">      <span class="keyword">if</span> (isReservedAttribute(hyphenatedKey) ||</span><br><span class="line">          config.isReservedAttr(hyphenatedKey)) &#123;</span><br><span class="line">        warn(</span><br><span class="line">          <span class="string">`"<span class="subst">$&#123;hyphenatedKey&#125;</span>" is a reserved attribute and cannot be used as component prop.`</span>,</span><br><span class="line">          vm</span><br><span class="line">        )</span><br><span class="line">      &#125;</span><br><span class="line">      defineReactive(props, key, value, () =&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (!isRoot &amp;&amp; !isUpdatingChildComponent) &#123;</span><br><span class="line">          warn(</span><br><span class="line">            <span class="string">`Avoid mutating a prop directly since the value will be `</span> +</span><br><span class="line">            <span class="string">`overwritten whenever the parent component re-renders. `</span> +</span><br><span class="line">            <span class="string">`Instead, use a data or computed property based on the prop's `</span> +</span><br><span class="line">            <span class="string">`value. Prop being mutated: "<span class="subst">$&#123;key&#125;</span>"`</span>,</span><br><span class="line">            vm</span><br><span class="line">          )</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      defineReactive(props, key, value)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// static props are already proxied on the component's prototype</span></span><br><span class="line">    <span class="comment">// during Vue.extend(). We only need to proxy props defined at</span></span><br><span class="line">    <span class="comment">// instantiation here.</span></span><br><span class="line">    <span class="keyword">if</span> (!(key <span class="keyword">in</span> vm)) &#123;</span><br><span class="line">      proxy(vm, <span class="string">`_props`</span>, key)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  toggleObserving(<span class="literal">true</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面源码中就涉及到了Vue中的observer模式， 在Observer对象中绑定了getter/setter方法去收集依赖、监听变化并进行数据更新。</p>
+<p>来到<code>src/core/observer/index/js</code>中看下Observer是如何定义的， 首先是Observer定义：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Observer class that is attached to each observed</span></span><br><span class="line"><span class="comment"> * object. Once attached, the observer converts the target</span></span><br><span class="line"><span class="comment"> * object's property keys into getter/setters that</span></span><br><span class="line"><span class="comment"> * collect dependencies and dispatch updates.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">export</span> <span class="class"><span class="keyword">class</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line">  value: any;</span><br><span class="line">  dep: Dep;</span><br><span class="line">  vmCount: number; <span class="comment">// number of vms that have this object as root $data</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span> (value: any) &#123;</span><br><span class="line">    <span class="keyword">this</span>.value = value</span><br><span class="line">    <span class="keyword">this</span>.dep = <span class="keyword">new</span> Dep()</span><br><span class="line">    <span class="keyword">this</span>.vmCount = <span class="number">0</span></span><br><span class="line">    <span class="comment">// def即封装的defineProperty,可写可配置</span></span><br><span class="line">    def(value, <span class="string">'__ob__'</span>, <span class="keyword">this</span>)</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(value)) &#123;</span><br><span class="line">      <span class="comment">// hasProto: 能否使用__proto__</span></span><br><span class="line">      <span class="comment">// protoAgrument: 为对象的__proto__赋值</span></span><br><span class="line">      <span class="comment">// arrayMethods： 数组的方法</span></span><br><span class="line">      <span class="keyword">if</span> (hasProto) &#123;</span><br><span class="line">        protoAugment(value, arrayMethods)</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 将数组方法按键值对形式赋给value，即value[arrayKey] = arrayMethod</span></span><br><span class="line">        copyAugment(value, arrayMethods, arrayKeys)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// 对于value中每个元素，都去执行observe(value[i])</span></span><br><span class="line">      <span class="keyword">this</span>.observeArray(value)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// 如果value不是数组的话，对value中每个属性执行defineReactive()</span></span><br><span class="line">      <span class="keyword">this</span>.walk(value)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>其中 <code>observe</code>方法定义如下，它主要做的事就是<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Attempt to create an observer instance for a value,</span></span><br><span class="line"><span class="comment"> * returns the new observer if successfully observed,</span></span><br><span class="line"><span class="comment"> * or the existing observer if the value already has one.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> <span class="comment">// 如果存在 __ob__这个属性，说明构造函数的参数已经是一个Observer对象了，直接返回value.__ob__</span></span><br><span class="line"> <span class="comment">// 否则构造一个新的Observer对象</span></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">observe</span> (<span class="params">value: any, asRootData: ?boolean</span>): <span class="title">Observer</span> | <span class="title">void</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!isObject(value) || value <span class="keyword">instanceof</span> VNode) &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">let</span> ob: Observer | <span class="keyword">void</span></span><br><span class="line">  <span class="keyword">if</span> (hasOwn(value, <span class="string">'__ob__'</span>) &amp;&amp; value.__ob__ <span class="keyword">instanceof</span> Observer) &#123;</span><br><span class="line">    ob = value.__ob__</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (</span><br><span class="line">    shouldObserve &amp;&amp;</span><br><span class="line">    !isServerRendering() &amp;&amp;</span><br><span class="line">    (<span class="built_in">Array</span>.isArray(value) || isPlainObject(value)) &amp;&amp;</span><br><span class="line">    <span class="built_in">Object</span>.isExtensible(value) &amp;&amp;</span><br><span class="line">    !value._isVue</span><br><span class="line">  ) &#123;</span><br><span class="line">    ob = <span class="keyword">new</span> Observer(value)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (asRootData &amp;&amp; ob) &#123;</span><br><span class="line">    ob.vmCount++</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> ob</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Define a reactive property on an Object.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">defineReactive</span> (<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">  obj: Object,</span></span></span><br><span class="line"><span class="function"><span class="params">  key: string,</span></span></span><br><span class="line"><span class="function"><span class="params">  val: any,</span></span></span><br><span class="line"><span class="function"><span class="params">  customSetter?: ?Function,</span></span></span><br><span class="line"><span class="function"><span class="params">  shallow?: boolean</span></span></span><br><span class="line"><span class="function"><span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> dep = <span class="keyword">new</span> Dep()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> property = <span class="built_in">Object</span>.getOwnPropertyDescriptor(obj, key)</span><br><span class="line">  <span class="keyword">if</span> (property &amp;&amp; property.configurable === <span class="literal">false</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// cater for pre-defined getter/setters</span></span><br><span class="line">  <span class="keyword">const</span> getter = property &amp;&amp; property.get</span><br><span class="line">  <span class="keyword">const</span> setter = property &amp;&amp; property.set</span><br><span class="line">  <span class="keyword">if</span> ((!getter || setter) &amp;&amp; <span class="built_in">arguments</span>.length === <span class="number">2</span>) &#123;</span><br><span class="line">    val = obj[key]</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> childOb = !shallow &amp;&amp; observe(val)</span><br><span class="line">  <span class="built_in">Object</span>.defineProperty(obj, key, &#123;</span><br><span class="line">    enumerable: <span class="literal">true</span>,</span><br><span class="line">    configurable: <span class="literal">true</span>,</span><br><span class="line">    <span class="keyword">get</span>: function reactiveGetter () &#123;</span><br><span class="line">      <span class="keyword">const</span> value = getter ? getter.call(obj) : val</span><br><span class="line">      <span class="keyword">if</span> (Dep.target) &#123;</span><br><span class="line">        dep.depend()</span><br><span class="line">        <span class="keyword">if</span> (childOb) &#123;</span><br><span class="line">          childOb.dep.depend()</span><br><span class="line">          <span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(value)) &#123;</span><br><span class="line">            dependArray(value)</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> value</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="keyword">set</span>: function reactiveSetter (newVal) &#123;</span><br><span class="line">      <span class="keyword">const</span> value = getter ? getter.call(obj) : val</span><br><span class="line">      <span class="comment">/* eslint-disable no-self-compare */</span></span><br><span class="line">      <span class="keyword">if</span> (newVal === value || (newVal !== newVal &amp;&amp; value !== value)) &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">/* eslint-enable no-self-compare */</span></span><br><span class="line">      <span class="keyword">if</span> (process.env.NODE_ENV !== <span class="string">'production'</span> &amp;&amp; customSetter) &#123;</span><br><span class="line">        customSetter()</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// #7981: for accessor properties without setter</span></span><br><span class="line">      <span class="keyword">if</span> (getter &amp;&amp; !setter) <span class="keyword">return</span></span><br><span class="line">      <span class="keyword">if</span> (setter) &#123;</span><br><span class="line">        setter.call(obj, newVal)</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        val = newVal</span><br><span class="line">      &#125;</span><br><span class="line">      childOb = !shallow &amp;&amp; observe(newVal)</span><br><span class="line">      dep.notify()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Reactive 就是一种可观测的数据模型，defineReactive中主要用 get和set去拦截数据的读取与变化。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/09/06/Vue源码学习之三/" data-id="ck0b883ow00026kuo7wiqbpam" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Vue源码中知识点总结" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/09/06/Vue源码中知识点总结/" class="article-date">
+  <time datetime="2019-09-06T03:10:35.000Z" itemprop="datePublished">2019-09-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/09/06/Vue源码中知识点总结/">Vue源码中知识点总结</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ol>
+<li>native code</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">isNative</span> (<span class="params">Ctor: any</span>): <span class="title">boolean</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">typeof</span> Ctor === <span class="string">'function'</span> &amp;&amp; <span class="regexp">/native code/</span>.test(Ctor.toString())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>Plain Object</li>
+</ol>
+<p>简单对象：通过{} 或 new() 创建的对象<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断是否位简单对象</span></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">isPlainObject</span> (<span class="params">obj: any</span>): <span class="title">boolean</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> _toString.call(obj) === <span class="string">'[object Object]'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/09/06/Vue源码中知识点总结/" data-id="ck0b883oh00006kuoju2xc2yu" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Vue源码学习之二" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/08/23/Vue源码学习之二/" class="article-date">
@@ -100,13 +192,16 @@
 </ul>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">initMixin</span> (<span class="params">Vue: Class&lt;Component&gt;</span>) </span>&#123;</span><br><span class="line">  Vue.prototype._init = <span class="function"><span class="keyword">function</span> (<span class="params">options?: Object</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> vm: Component = <span class="keyword">this</span></span><br><span class="line">    <span class="comment">// a uid</span></span><br><span class="line">    vm._uid = uid++</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> startTag, endTag</span><br><span class="line">    <span class="comment">/* istanbul ignore if */</span></span><br><span class="line">    <span class="comment">// 性能优化</span></span><br><span class="line">    <span class="keyword">if</span> (process.env.NODE_ENV !== <span class="string">'production'</span> &amp;&amp; config.performance &amp;&amp; mark) &#123;</span><br><span class="line">      startTag = <span class="string">`vue-perf-start:<span class="subst">$&#123;vm._uid&#125;</span>`</span></span><br><span class="line">      endTag = <span class="string">`vue-perf-end:<span class="subst">$&#123;vm._uid&#125;</span>`</span></span><br><span class="line">      mark(startTag)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// a flag to avoid this being observed</span></span><br><span class="line">    vm._isVue = <span class="literal">true</span></span><br><span class="line">    <span class="comment">// merge options</span></span><br><span class="line">    <span class="comment">// _isComponent 用于标识 Vue 实例是否是组件</span></span><br><span class="line">    <span class="keyword">if</span> (options &amp;&amp; options._isComponent) &#123;</span><br><span class="line">      <span class="comment">// optimize internal component instantiation</span></span><br><span class="line">      <span class="comment">// since dynamic options merging is pretty slow, and none of the</span></span><br><span class="line">      <span class="comment">// internal component options needs special treatment.</span></span><br><span class="line">      <span class="comment">// </span></span><br><span class="line">      initInternalComponent(vm, options)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      vm.$options = mergeOptions(</span><br><span class="line">        resolveConstructorOptions(vm.constructor),</span><br><span class="line">        options || &#123;&#125;,</span><br><span class="line">        vm</span><br><span class="line">      )</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* istanbul ignore else */</span></span><br><span class="line">    <span class="comment">// 如果不是在生产环境，初始化proxy</span></span><br><span class="line">    <span class="keyword">if</span> (process.env.NODE_ENV !== <span class="string">'production'</span>) &#123;</span><br><span class="line">      initProxy(vm)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      vm._renderProxy = vm</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// expose real self</span></span><br><span class="line">    vm._self = vm</span><br><span class="line">    initLifecycle(vm) <span class="comment">// 生命周期相关的初始化</span></span><br><span class="line">    initEvents(vm) <span class="comment">// 事件相关初始化</span></span><br><span class="line">    initRender(vm) <span class="comment">// 渲染相关初始化</span></span><br><span class="line">    callHook(vm, <span class="string">'beforeCreate'</span>) <span class="comment">// 调用beforeCreate</span></span><br><span class="line">    initInjections(vm) <span class="comment">// resolve injections before data/props</span></span><br><span class="line">    initState(vm) <span class="comment">// 初始化data，进行双向绑定</span></span><br><span class="line">    initProvide(vm) <span class="comment">// resolve provide after data/props</span></span><br><span class="line">    callHook(vm, <span class="string">'created'</span>) <span class="comment">// 调用created</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* istanbul ignore if */</span></span><br><span class="line">    <span class="keyword">if</span> (process.env.NODE_ENV !== <span class="string">'production'</span> &amp;&amp; config.performance &amp;&amp; mark) &#123;</span><br><span class="line">      vm._name = formatComponentName(vm, <span class="literal">false</span>)</span><br><span class="line">      mark(endTag)</span><br><span class="line">      measure(<span class="string">`vue <span class="subst">$&#123;vm._name&#125;</span> init`</span>, startTag, endTag)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (vm.$options.el) &#123;</span><br><span class="line">      vm.$mount(vm.$options.el)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>了解了大概的初始化流程之后，来具体看一下相关函数：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">resolveConstructorOptions</span> (<span class="params">Ctor: Class&lt;Component&gt;</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> options = Ctor.options</span><br><span class="line">  <span class="keyword">if</span> (Ctor.super) &#123;</span><br><span class="line">    <span class="keyword">const</span> superOptions = resolveConstructorOptions(Ctor.super)</span><br><span class="line">    <span class="keyword">const</span> cachedSuperOptions = Ctor.superOptions</span><br><span class="line">    <span class="keyword">if</span> (superOptions !== cachedSuperOptions) &#123;</span><br><span class="line">      <span class="comment">// super option changed,</span></span><br><span class="line">      <span class="comment">// need to resolve new options.</span></span><br><span class="line">      Ctor.superOptions = superOptions</span><br><span class="line">      <span class="comment">// check if there are any late-modified/attached options (#4976)</span></span><br><span class="line">      <span class="keyword">const</span> modifiedOptions = resolveModifiedOptions(Ctor)</span><br><span class="line">      <span class="comment">// update base extend options</span></span><br><span class="line">      <span class="keyword">if</span> (modifiedOptions) &#123;</span><br><span class="line">        extend(Ctor.extendOptions, modifiedOptions)</span><br><span class="line">      &#125;</span><br><span class="line">      options = Ctor.options = mergeOptions(superOptions, Ctor.extendOptions)</span><br><span class="line">      <span class="keyword">if</span> (options.name) &#123;</span><br><span class="line">        options.components[options.name] = Ctor</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> options</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">resolveConstructorOptions</span> (<span class="params">Ctor: Class&lt;Component&gt;</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> options = Ctor.options</span><br><span class="line">  <span class="keyword">if</span> (Ctor.super) &#123;</span><br><span class="line">    <span class="keyword">const</span> superOptions = resolveConstructorOptions(Ctor.super)</span><br><span class="line">    <span class="keyword">const</span> cachedSuperOptions = Ctor.superOptions</span><br><span class="line">    <span class="keyword">if</span> (superOptions !== cachedSuperOptions) &#123;</span><br><span class="line">      <span class="comment">// super option changed,</span></span><br><span class="line">      <span class="comment">// need to resolve new options.</span></span><br><span class="line">      Ctor.superOptions = superOptions</span><br><span class="line">      <span class="comment">// check if there are any late-modified/attached options (#4976)</span></span><br><span class="line">      <span class="comment">// resolveModifiedOptions 返回</span></span><br><span class="line">      <span class="keyword">const</span> modifiedOptions = resolveModifiedOptions(Ctor)</span><br><span class="line">      <span class="comment">// update base extend options</span></span><br><span class="line">      <span class="keyword">if</span> (modifiedOptions) &#123;</span><br><span class="line">        extend(Ctor.extendOptions, modifiedOptions)</span><br><span class="line">      &#125;</span><br><span class="line">      options = Ctor.options = mergeOptions(superOptions, Ctor.extendOptions)</span><br><span class="line">      <span class="keyword">if</span> (options.name) &#123;</span><br><span class="line">        options.components[options.name] = Ctor</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> options</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>resolveConstructorOptions</code>这个函数用于解析构造函数中的选项 <code>options</code>。<code>Ctor.super</code> 是当 Ctor 是 <code>Vue.extend</code> 构建的子类时，它就会具有 <code>super</code> 这个属性。此时，去对比 Ctor 与其父类的 options ，如果不一样的话，说明父类的 options 已被修改过（比如有mixins），那么就调用 <code>extend</code> 函数将已修改过的部分扩展到 <code>Ctor</code> 的 <code>options</code> 中。</p>
+<p>扩展函数 <code>extend</code> 如下，这里是用到这个函数将父类中修改后的选项逐一添加到 Ctor 的选项中。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">extend</span> (<span class="params">to: Object, _from: ?Object</span>): <span class="title">Object</span> </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> key <span class="keyword">in</span> _from) &#123;</span><br><span class="line">    to[key] = _from[key]</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> to</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而 <code>mergeOptions</code> 则是对 options 中各项属性 data、 watch等与父类进行合并。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/23/Vue源码学习之二/" data-id="cjzr4duud0000kguoyjzr6t9u" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/08/23/Vue源码学习之二/" data-id="ck0b883p000046kuode12iu35" class="article-share-link">Share</a>
       
       
     </footer>
@@ -167,7 +262,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/17/Vue源码学习之一/" data-id="cjzr4duuo0002kguoe09g9u5f" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/08/17/Vue源码学习之一/" data-id="ck0b883oy00036kuoarc9979a" class="article-share-link">Share</a>
       
       
     </footer>
@@ -238,7 +333,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/09/element源码学习/" data-id="cjzr4duus0003kguouz7euih2" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/08/09/element源码学习/" data-id="ck0b883p400066kuoylyvbxmt" class="article-share-link">Share</a>
       
       
     </footer>
@@ -296,7 +391,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/05/web安全之xss攻击/" data-id="cjzr4duuw0007kguoruh9qj5a" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/08/05/web安全之xss攻击/" data-id="ck0b883p900096kuo0nqf8mhi" class="article-share-link">Share</a>
       
       
     </footer>
@@ -352,7 +447,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/17/web安全之CSRF攻击/" data-id="cjzr4duuu0005kguosp66t6rv" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/17/web安全之CSRF攻击/" data-id="ck0b883pb000a6kuou43n9hsf" class="article-share-link">Share</a>
       
       
     </footer>
@@ -426,7 +521,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/16/基于Token的身份验证方案/" data-id="cjzr4duuv0006kguo60e7tx5m" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/16/基于Token的身份验证方案/" data-id="ck0b883p600076kuonwr6jqfh" class="article-share-link">Share</a>
       
       
     </footer>
@@ -469,7 +564,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/14/深度优先算法实现深拷贝/" data-id="cjzr4duuy0009kguon3ri6jv5" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/14/深度优先算法实现深拷贝/" data-id="ck0b883pe000b6kuo6xt2vlan" class="article-share-link">Share</a>
       
       
     </footer>
@@ -526,119 +621,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="cjzr4duul0001kguoozla7ugi" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker基础学习" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/06/30/docker基础学习/" class="article-date">
-  <time datetime="2019-06-30T06:48:12.000Z" itemprop="datePublished">2019-06-30</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/06/30/docker基础学习/">docker基础学习</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><p>Dockers是是一个开源的应用容器引擎，让开发者将应用以及依赖包打包到一个可移植的容器中，然后发布到任何流行的 Linux或Windows 机器上，也可以实现虚拟化。</p>
-<h2 id="docker-镜像"><a href="#docker-镜像" class="headerlink" title="docker 镜像"></a>docker 镜像</h2><p>Docker 镜像是一个特殊的文件系统，除了提供容器运行时所需的程序、库、资源、配置等文件外，还包含了一些为运行时准备的一些配置参数（如匿名卷、环境变量、用户等）。镜像不包含任何动态数据，其内容在构建之后也不会被改变。</p>
-<h2 id="docker-容器"><a href="#docker-容器" class="headerlink" title="docker 容器"></a>docker 容器</h2><p>容器就是将软件打包成标准化单元，以用于开发、交付和部署，是镜像运行的实体。<br>容器和虚机的区别：传统虚拟机技术是虚拟出一套硬件后，在其上运行一个完整操作系统，在该系统上再运行所需应用进程；而容器内的应用进程直接运行于宿主的内核，容器内没有自己的内核，而且也没有进行硬件虚拟。因此容器要比传统虚拟机更为轻便。</p>
-<h2 id="仓库"><a href="#仓库" class="headerlink" title="仓库"></a>仓库</h2><p>Docker Registry 是一个集中的存储、分发镜像的服务。通常，一个仓库会包含同一个软件不同版本的镜像，而标签就常用于对应该软件的各个版本。我们可以通过 &lt;仓库名&gt;:&lt;标签&gt; 的格式来指定具体是这个软件哪个版本的镜像。如果不给出标签，将以 latest 作为默认标签。 </p>
-<p>Docker Registry 公开服务是开放给用户使用、允许用户管理镜像的 Registry 服务。一般这类公开服务允许用户免费上传、下载公开的镜像，并可能提供收费服务供用户管理私有镜像。最常使用的 Registry 公开服务是官方的 Docker Hub，这也是默认的 Registry，并拥有大量的高质量的官方镜像。除此以外，还有 CoreOS 的 Quay.io，CoreOS 相关的镜像存储在这里；Google 的 Google Container Registry，Kubernetes 的镜像使用的就是这个服务。</p>
-<h2 id="常用指令"><a href="#常用指令" class="headerlink" title="常用指令"></a>常用指令</h2><p>对于前端来说，最常用到docker的场景就是打包部署了，常用到以下指令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># 将项目文件打包成镜像</span><br><span class="line">docker build -t &lt;name:tag&gt; .</span><br><span class="line"></span><br><span class="line"># 打tag</span><br><span class="line">docker tag &lt;name:tag&gt; &lt;registry/name:tag&gt;</span><br><span class="line"></span><br><span class="line"># 本地起一个容器测试</span><br><span class="line">docker run -d -p &lt;port&gt; &lt;imageId&gt;</span><br><span class="line"></span><br><span class="line"># 登录registry</span><br><span class="line">docker login &lt;registry&gt;</span><br><span class="line"></span><br><span class="line"># 推送镜像</span><br><span class="line">docker push &lt;registry/name:tag&gt;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/30/docker基础学习/" data-id="cjzr4duut0004kguo3q9wqkpp" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-grid布局" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/06/21/grid布局/" class="article-date">
-  <time datetime="2019-06-21T07:07:51.000Z" itemprop="datePublished">2019-06-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/06/21/grid布局/">grid布局</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Grid（网格）布局，顾名思义，它把页面划分成一个个网格，可以自由控制网格大小、位置以达到不同的布局样式。<br>网格是由一组水平垂直相交的直线所形成的，水平网格线划分出行，垂直网格线划分出列。</p>
-<p>和flex布局类似，grid布局也有容器属性和项目属性这两种属性，在一个元素上应用了 <code>display: grid;</code> 则这个元素为容器元素，其内部的子元素为网格元素。下面将结合以下代码学习网格布局：</p>
-<p>Html如下：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"container"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item-1"</span>&gt;</span>1<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item-2"</span>&gt;</span>2<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item-3"</span>&gt;</span>3<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item-4"</span>&gt;</span>4<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item-5"</span>&gt;</span>5<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item-6"</span>&gt;</span>6<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item-7"</span>&gt;</span>7<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item-8"</span>&gt;</span>8<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>CSS如下，这里为了方便截图且能看清楚容器大小给容器元素设定了 400px 宽高和边框：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">display</span>: grid;</span><br><span class="line">  <span class="attribute">width</span>: <span class="number">400px</span>;</span><br><span class="line">  <span class="attribute">height</span>: <span class="number">400px</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-id">#container</span> &gt; <span class="selector-tag">div</span> &#123;</span><br><span class="line">  <span class="attribute">width</span>: <span class="number">50px</span>;</span><br><span class="line">  <span class="attribute">height</span>: <span class="number">50px</span>;</span><br><span class="line">  <span class="attribute">color</span>: <span class="number">#fff</span>;</span><br><span class="line">  <span class="attribute">background-color</span>: <span class="number">#8ca0ff</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="1-容器属性"><a href="#1-容器属性" class="headerlink" title="1. 容器属性"></a>1. 容器属性</h2><h3 id="1-1-display"><a href="#1-1-display" class="headerlink" title="1.1 display"></a>1.1 <code>display</code></h3><p><code>display: grid;</code> 指定一个元素采用网格布局。在一个元素上应用了 <code>display: grid;</code> 则这个元素为容器元素，其内部的子元素为网格元素。也可以设定为 <code>display: inline-grid;</code> 则容器元素为行内元素。</p>
-<h3 id="1-1-grid-template"><a href="#1-1-grid-template" class="headerlink" title="1.1 grid-template"></a>1.1 <code>grid-template</code></h3><p><code>grid-template</code> 属性包含 <code>grid-template-rows</code>, <code>grid-template-columns</code> 和 <code>grid-template-areas</code>。</p>
-<p> <code>grid-template-rows</code>, <code>grid-template-columns</code> 分别用于设置各行和各列的行高、列宽，其值可以是 <code>px</code>、百分比或者 <code>fr</code>。 <code>fr</code> 是网格布局中的一个布局单位，用于在一系列长度空间中分配剩余空间, 如指定 <code>grid-template-columns: 100px 2rf 1fr;</code>, 那么在除去第一列的剩余空间中分配第二列与第三列的宽度，第二列的宽度是第三列的两倍。</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-template-rows</span>: <span class="number">100px</span> <span class="number">100px</span> <span class="number">100px</span>;</span><br><span class="line">  <span class="attribute">grid-template-columns</span>: <span class="number">100px</span> <span class="number">100px</span> <span class="number">100px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>给container添加以上样式后，效果如下：</p>
-<p><img src="/images/0621/1-1.PNG" alt="avatar"></p>
-<p>使用 <code>fr</code> :</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-template-rows</span>: <span class="number">200px</span> <span class="number">1</span>fr <span class="number">2</span>fr;</span><br><span class="line">  <span class="attribute">grid-template-columns</span>: <span class="number">2</span>fr <span class="number">1</span>fr <span class="number">1</span>fr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="/images/0621/1-2.PNG" alt="avatar"></p>
-<p>如果有多行或者多列的话，重复写各行/列的值可能比较麻烦，这时候可以使用 <code>repeat</code> 函数，其第一个参数是要重复的次数，后面的参数是要重复的值：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-template-rows</span>: <span class="built_in">repeat</span>(3, 100px);</span><br><span class="line">  <span class="attribute">grid-template-columns</span>: <span class="built_in">repeat</span>(2, 60px 80px);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="/images/0621/1-3.PNG" alt="avatar"></p>
-<p>使用 <code>grid-auto-flow</code> 属性可以指定各个项目元素排列的顺序，取值可以是 <code>row</code> 或 <code>column</code>:</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-template-rows</span>: <span class="built_in">repeat</span>(3, 100px);</span><br><span class="line">  <span class="attribute">grid-template-columns</span>: <span class="built_in">repeat</span>(3, 100px);</span><br><span class="line">  <span class="attribute">grid-auto-flow</span>: column;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="/images/0621/1-4.PNG" alt="avatar"></p>
-<h3 id="1-2-grid-column-gap-grid-row-gap"><a href="#1-2-grid-column-gap-grid-row-gap" class="headerlink" title="1.2 grid-column-gap, grid-row-gap"></a>1.2 <code>grid-column-gap</code>, <code>grid-row-gap</code></h3><p>这两个属性用于设置行、列之间的间距。也可用 <code>grid-gap</code> 同时设置这两个属性，用法为：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-gap</span>: &lt;grid-row-gap&gt; &lt;grid-column-gap&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="1-3-项目对齐"><a href="#1-3-项目对齐" class="headerlink" title="1.3 项目对齐"></a>1.3 项目对齐</h3><p><code>justify-items</code> 和 <code>align-items</code> 分别用于设置沿着行和列对齐网格项的方式，可取值：</p>
-<p><code>start</code>：将网格项对齐到其单元格的左侧起始边缘（左侧对齐）<br><code>end</code>：将网格项对齐到其单元格的右侧结束边缘（右侧对齐）<br><code>center</code>：将网格项对齐到其单元格的水平中间位置（水平居中对齐）<br><code>stretch</code>：填满单元格的宽度（默认值）</p>
-<p>示例：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#container</span> &#123;</span><br><span class="line">  <span class="attribute">grid-template-rows</span>: <span class="built_in">repeat</span>(3, 100px);</span><br><span class="line">  <span class="attribute">grid-template-columns</span>: <span class="built_in">repeat</span>(3, 100px);</span><br><span class="line">  <span class="attribute">align-items</span>: end;</span><br><span class="line">  <span class="attribute">justify-items</span>: center;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="/images/0621/1-5.PNG" alt="avatar"></p>
-<p><code>place-items</code> 属性是 <code>justify-items</code> 和 <code>align-items</code> 属性的简写，写法为：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">place-items</span>: &lt;<span class="selector-tag">align-items</span>&gt; &lt;<span class="selector-tag">justify-items</span>&gt;;</span><br></pre></td></tr></table></figure>
-<h2 id="项目属性"><a href="#项目属性" class="headerlink" title="项目属性"></a>项目属性</h2><p>项目属性设置在各个网格元素上。主要有以下属性：</p>
-<p><code>grid-column-start</code>，<code>grid-column-end</code>，<code>grid-row-start</code>，<code>grid-row-end</code> 分别用于指定左边框、右边框、上边框、下边框所在的水平网格线。</p>
-<p><code>justify-self</code>, <code>align-self</code>, <code>place-self</code> 属性和容器属性中的 <code>justify-items</code>， <code>align-items</code>， <code>place-items</code> 属性用法类似，只不过是作用在单个容器元素上。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/21/grid布局/" data-id="cjzr4duv0000akguooy0uqdpr" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="ck0b883os00016kuofragby01" class="article-share-link">Share</a>
       
       
     </footer>
@@ -671,7 +654,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li></ul>
     </div>
   </div>
 
@@ -684,6 +667,14 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       <ul>
         
           <li>
+            <a href="/2019/09/06/Vue源码学习之三/">Vue源码学习之三</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/06/Vue源码中知识点总结/">Vue源码中知识点总结</a>
+          </li>
+        
+          <li>
             <a href="/2019/08/23/Vue源码学习之二/">Vue源码学习之二</a>
           </li>
         
@@ -693,14 +684,6 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
         
           <li>
             <a href="/2019/08/09/element源码学习/">element源码学习之clickoutside</a>
-          </li>
-        
-          <li>
-            <a href="/2019/08/05/web安全之xss攻击/">web安全之xss攻击</a>
-          </li>
-        
-          <li>
-            <a href="/2019/07/17/web安全之CSRF攻击/">web安全之CSRF攻击</a>
           </li>
         
       </ul>
