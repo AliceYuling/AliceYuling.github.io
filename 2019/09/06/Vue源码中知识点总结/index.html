@@ -14,7 +14,7 @@
 <meta property="og:site_name" content="Rin&#39;s blog">
 <meta property="og:description" content="native code  123export function isNative (Ctor: any): boolean &amp;#123;  return typeof Ctor === &apos;function&apos; &amp;amp;&amp;amp; /native code/.test(Ctor.toString())&amp;#125;  Plain Object  简单对象：通过{} 或 new() 创建的对象1234">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-09-06T06:47:59.198Z">
+<meta property="og:updated_time" content="2019-09-14T09:26:56.216Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Vue源码中知识点总结">
 <meta name="twitter:description" content="native code  123export function isNative (Ctor: any): boolean &amp;#123;  return typeof Ctor === &apos;function&apos; &amp;amp;&amp;amp; /native code/.test(Ctor.toString())&amp;#125;  Plain Object  简单对象：通过{} 或 new() 创建的对象1234">
@@ -94,11 +94,14 @@
 <li>Plain Object</li>
 </ol>
 <p>简单对象：通过{} 或 new() 创建的对象<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断是否位简单对象</span></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">isPlainObject</span> (<span class="params">obj: any</span>): <span class="title">boolean</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> _toString.call(obj) === <span class="string">'[object Object]'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ol start="3">
+<li>Object.isfrozon<br>判断一个对象是否被冻结。一个对象是冻结的是指它不可扩展，所有属性都是不可配置的，且所有数据属性（即没有getter或setter组件的访问器的属性）都是不可写的。</li>
+</ol>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/06/Vue源码中知识点总结/" data-id="ck0b883oh00006kuoju2xc2yu" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/09/06/Vue源码中知识点总结/" data-id="ck11vjstb0002zsuo829tjond" class="article-share-link">Share</a>
       
       
     </footer>
@@ -156,6 +159,10 @@
       <ul>
         
           <li>
+            <a href="/2019/09/27/Canvas绘制图形/">Canvas绘制图形</a>
+          </li>
+        
+          <li>
             <a href="/2019/09/06/Vue源码学习之三/">Vue源码学习之三</a>
           </li>
         
@@ -169,10 +176,6 @@
         
           <li>
             <a href="/2019/08/17/Vue源码学习之一/">Vue源码学习之一</a>
-          </li>
-        
-          <li>
-            <a href="/2019/08/09/element源码学习/">element源码学习之clickoutside</a>
           </li>
         
       </ul>

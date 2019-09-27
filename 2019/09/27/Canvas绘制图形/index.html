@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Canvas绘制图形 | Rin&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近几天研究了一下使用 Canvas 在图片上划分出一块区域的功能，具体需求是在图片上圈出一块区域并重新生成图片。实现如下； html 部分，因为要实现橡皮的功能，所以这里使用了两层 canvas，底层 canvas 绘制原图片，上层 canvas 用于画笔绘制和擦除： 123456789&amp;lt;div id=&quot;container&quot; style=&quot;position: relative&quot;&amp;gt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Canvas绘制图形">
+<meta property="og:url" content="http://yoursite.com/2019/09/27/Canvas绘制图形/index.html">
+<meta property="og:site_name" content="Rin&#39;s blog">
+<meta property="og:description" content="最近几天研究了一下使用 Canvas 在图片上划分出一块区域的功能，具体需求是在图片上圈出一块区域并重新生成图片。实现如下； html 部分，因为要实现橡皮的功能，所以这里使用了两层 canvas，底层 canvas 绘制原图片，上层 canvas 用于画笔绘制和擦除： 123456789&amp;lt;div id=&quot;container&quot; style=&quot;position: relative&quot;&amp;gt;">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-09-27T08:38:08.287Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Canvas绘制图形">
+<meta name="twitter:description" content="最近几天研究了一下使用 Canvas 在图片上划分出一块区域的功能，具体需求是在图片上圈出一块区域并重新生成图片。实现如下； html 部分，因为要实现橡皮的功能，所以这里使用了两层 canvas，底层 canvas 绘制原图片，上层 canvas 用于画笔绘制和擦除： 123456789&amp;lt;div id=&quot;container&quot; style=&quot;position: relative&quot;&amp;gt;">
+  
+    <link rel="alternate" href="/atom.xml" title="Rin&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Rin&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Canvas绘制图形" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/09/27/Canvas绘制图形/" class="article-date">
+  <time datetime="2019-09-27T06:57:37.000Z" itemprop="datePublished">2019-09-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Canvas绘制图形
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近几天研究了一下使用 Canvas 在图片上划分出一块区域的功能，具体需求是在图片上圈出一块区域并重新生成图片。实现如下；</p>
+<p>html 部分，因为要实现橡皮的功能，所以这里使用了两层 canvas，底层 canvas 绘制原图片，上层 canvas 用于画笔绘制和擦除：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=<span class="string">"container"</span> style=<span class="string">"position: relative"</span>&gt;</span><br><span class="line">  &lt;canvas id=<span class="string">"oriCanvas"</span> width=<span class="string">"1000"</span> height=<span class="string">"1000"</span> style=<span class="string">"position: relative; left:0; top:0;"</span>&gt;&lt;/canvas&gt;</span><br><span class="line">  &lt;canvas id=<span class="string">"maskCanvas"</span> width=<span class="string">"1000"</span> height=<span class="string">"1000"</span> style=<span class="string">"position: absolute;left:0;top:0;z-index:99;"</span>&gt;&lt;/canvas&gt;</span><br><span class="line">  &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">"toolbar"</span>&gt;</span><br><span class="line">    &lt;button id=<span class="string">"eraser"</span>&gt;擦除&lt;<span class="regexp">/button&gt;</span></span><br><span class="line"><span class="regexp">    &lt;button id="pen"&gt;绘制&lt;/</span>button&gt;</span><br><span class="line">    &lt;button id=<span class="string">"gen"</span>&gt;生成&lt;<span class="regexp">/button&gt;</span></span><br><span class="line"><span class="regexp">  &lt;/</span>div&gt;</span><br><span class="line">&lt;<span class="regexp">/div&gt;</span></span><br></pre></td></tr></table></figure>
+<p>首先， 进行原图像的绘制, 为了避免在图片未加载完成时绘制图片无效，在 Image 的 onload 事件中进行图片的绘制：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> oriCanvas = <span class="built_in">document</span>.getElementById(<span class="string">'oriCanvas'</span>);</span><br><span class="line"><span class="keyword">var</span> maskCanvas = <span class="built_in">document</span>.getElementById(<span class="string">'maskCanvas'</span>);</span><br><span class="line"><span class="keyword">var</span> oriCtx = oriCanvas.getContext(<span class="string">'2d'</span>);</span><br><span class="line"><span class="keyword">var</span> maskCtx = maskCanvas.getContext(<span class="string">'2d'</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">loadImage</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  img = <span class="keyword">new</span> Image();</span><br><span class="line">  img.onload = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    isImgLoaded = <span class="literal">true</span>;</span><br><span class="line">    oriCanvas.width = <span class="keyword">this</span>.width;</span><br><span class="line">    oriCanvas.height = <span class="keyword">this</span>.height;</span><br><span class="line">    maskCanvas.width = <span class="keyword">this</span>.width;</span><br><span class="line">    maskCanvas.height = <span class="keyword">this</span>.height;</span><br><span class="line">    drawImage();</span><br><span class="line">  &#125;;</span><br><span class="line">  img.src = <span class="string">"https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1569233132184&amp;di=a1a45444230d083a872aff5db08ec216&amp;imgtype=0&amp;src=http%3A%2F%2Fphotocdn.sohu.com%2F20090224%2FImg262436027.jpg"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">drawImage</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  oriCtx.drawImage(img, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在按下鼠标时，记下当前鼠标所在位置，并标记当前是正在绘制中/擦除中：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">maskCanvas.onmousedown = <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (isPenSelected) &#123;</span><br><span class="line">    isPainting = <span class="literal">true</span>;</span><br><span class="line">    startX = e.pageX - maskCanvas.offsetLeft;</span><br><span class="line">    startY = e.pageY - maskCanvas.offsetTop;</span><br><span class="line">    prevX = startX;</span><br><span class="line">    prevY = startY;</span><br><span class="line">    maskCtx.beginPath();</span><br><span class="line">    maskCtx.moveTo(startX, startY);</span><br><span class="line">    maskCtx.lineWidth = <span class="number">1</span>;</span><br><span class="line">    maskCtx.strokeStyle = <span class="string">'#fff'</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    isClearing = <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>鼠标移动时，计算出当前坐标，并根据当前的操作进行绘制/擦除。绘制时将当前鼠标所在点与上一个点直接进行连接，擦除使用 clearRect 方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">maskCanvas.onmousemove = <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">  curX = e.pageX - maskCanvas.offsetLeft;</span><br><span class="line">  curY = e.pageY - maskCanvas.offsetTop;</span><br><span class="line">  <span class="keyword">if</span> (isPainting) &#123;</span><br><span class="line">    drawPath(curX, curY);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isClearing) &#123;</span><br><span class="line">    clear(curX, curY);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">drawPath</span>(<span class="params">x, y</span>) </span>&#123;</span><br><span class="line">  maskCtx.lineTo(x, y);</span><br><span class="line">  maskCtx.stroke();</span><br><span class="line">  prevX = x;</span><br><span class="line">  prevY = y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">clear</span>(<span class="params">x, y</span>) </span>&#123;</span><br><span class="line">  maskCtx.clearRect(x, y, <span class="number">8</span>, <span class="number">8</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后，点击”生成”按钮，将两层canvas合并并导出图片：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">gen.addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  oriCtx.drawImage(maskCanvas, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">var</span> resImg = oriCanvas.toDataURL();</span><br><span class="line">  <span class="keyword">var</span> resEl = <span class="built_in">document</span>.createElement(<span class="string">'img'</span>);</span><br><span class="line">  resEl.src = resImg;</span><br><span class="line">  <span class="built_in">document</span>.getElementById(<span class="string">'container'</span>).append(resEl);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/09/27/Canvas绘制图形/" data-id="ck11vjst30000zsuoyamvw9wc" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/09/06/Vue源码学习之三/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Vue源码学习之三</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/09/27/Canvas绘制图形/">Canvas绘制图形</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/06/Vue源码学习之三/">Vue源码学习之三</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/06/Vue源码中知识点总结/">Vue源码中知识点总结</a>
+          </li>
+        
+          <li>
+            <a href="/2019/08/23/Vue源码学习之二/">Vue源码学习之二</a>
+          </li>
+        
+          <li>
+            <a href="/2019/08/17/Vue源码学习之一/">Vue源码学习之一</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 Rin&#39;s blog<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
