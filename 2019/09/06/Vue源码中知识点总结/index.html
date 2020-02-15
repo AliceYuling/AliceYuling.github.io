@@ -14,7 +14,7 @@
 <meta property="og:site_name" content="Rin&#39;s blog">
 <meta property="og:description" content="native code  123export function isNative (Ctor: any): boolean &amp;#123;  return typeof Ctor === &apos;function&apos; &amp;amp;&amp;amp; /native code/.test(Ctor.toString())&amp;#125;  Plain Object  简单对象：通过{} 或 new() 创建的对象1234">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-09-14T09:26:56.216Z">
+<meta property="og:updated_time" content="2019-10-22T09:28:45.939Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Vue源码中知识点总结">
 <meta name="twitter:description" content="native code  123export function isNative (Ctor: any): boolean &amp;#123;  return typeof Ctor === &apos;function&apos; &amp;amp;&amp;amp; /native code/.test(Ctor.toString())&amp;#125;  Plain Object  简单对象：通过{} 或 new() 创建的对象1234">
@@ -95,13 +95,40 @@
 </ol>
 <p>简单对象：通过{} 或 new() 创建的对象<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断是否位简单对象</span></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">isPlainObject</span> (<span class="params">obj: any</span>): <span class="title">boolean</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> _toString.call(obj) === <span class="string">'[object Object]'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <ol start="3">
-<li>Object.isfrozon<br>判断一个对象是否被冻结。一个对象是冻结的是指它不可扩展，所有属性都是不可配置的，且所有数据属性（即没有getter或setter组件的访问器的属性）都是不可写的。</li>
+<li><p>Object.isfrozon<br>判断一个对象是否被冻结。一个对象是冻结的是指它不可扩展，所有属性都是不可配置的，且所有数据属性（即没有getter或setter组件的访问器的属性）都是不可写的。</p>
+</li>
+<li><p>makeMap</p>
+</li>
 </ol>
+<p>这个方法用于生成一个map并返回一个函数用于判断一个值是否在这个map中</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">makeMap</span> (<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">  str: string,</span></span></span><br><span class="line"><span class="function"><span class="params">  expectsLowerCase?: boolean</span></span></span><br><span class="line"><span class="function"><span class="params"></span>): (<span class="params">key: string</span>) =&gt; <span class="title">true</span> | <span class="title">void</span> </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> map = <span class="built_in">Object</span>.create(<span class="literal">null</span>)</span><br><span class="line">  <span class="keyword">const</span> list: <span class="built_in">Array</span>&lt;string&gt; = str.split(<span class="string">','</span>)</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; list.length; i++) &#123;</span><br><span class="line">    map[list[i]] = <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> expectsLowerCase</span><br><span class="line">    ? <span class="function"><span class="params">val</span> =&gt;</span> map[val.toLowerCase()]</span><br><span class="line">    : <span class="function"><span class="params">val</span> =&gt;</span> map[val]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="5">
+<li>检测浏览器是否支持passive特性</li>
+</ol>
+<p>关于 passive:<br>  <a href="https://www.cnblogs.com/ziyunfei/p/5545439.html" target="_blank" rel="noopener">https://www.cnblogs.com/ziyunfei/p/5545439.html</a><br>  <a href="https://blog.csdn.net/dj0379/article/details/52883315" target="_blank" rel="noopener">https://blog.csdn.net/dj0379/article/details/52883315</a></p>
+<p>检测方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">let</span> supportsPassive = <span class="literal">false</span>  <span class="comment">// 全局属性</span></span><br><span class="line"><span class="keyword">if</span> (inBrowser) &#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> opts = &#123;&#125;</span><br><span class="line">    <span class="comment">// defineProperty()方法在属性名不存在时会给对象创建属性名，执行下面这段代码后opts=&#123;passive: undefined&#125;</span></span><br><span class="line">    <span class="built_in">Object</span>.defineProperty(opts, <span class="string">'passive'</span>, (&#123;</span><br><span class="line">      <span class="keyword">get</span> () &#123;</span><br><span class="line">        <span class="comment">/* istanbul ignore next */</span></span><br><span class="line">        supportsPassive = <span class="literal">true</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;: <span class="built_in">Object</span>)) <span class="comment">// https://github.com/facebook/flow/issues/285</span></span><br><span class="line">    <span class="built_in">window</span>.addEventListener(<span class="string">'test-passive'</span>, <span class="literal">null</span>, opts)  <span class="comment">// 通过注册一个事件来执行opts中的getter</span></span><br><span class="line">  &#125; <span class="keyword">catch</span> (e) &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="6">
+<li>获取原生类型</li>
+</ol>
+<p>在任何值上调用 Object 原生的 toString() 方法，都会返回一个 [object NativeConstructorName] 格式的字符串。每个类在内部都有一个 [[Class]] 属性，这个属性中就指定了上述字符串中的构造函数名， 如 ‘[object Array]’</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">toRawType</span> (<span class="params">value: any</span>): <span class="title">string</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> _toString.call(value).slice(<span class="number">8</span>, <span class="number">-1</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="7">
+<li>cached方法</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cached</span>&lt;<span class="title">F</span>: <span class="title">Function</span>&gt; (<span class="params">fn: F</span>): <span class="title">F</span> </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> cache = <span class="built_in">Object</span>.create(<span class="literal">null</span>)</span><br><span class="line">  <span class="keyword">return</span> (<span class="function"><span class="keyword">function</span> <span class="title">cachedFn</span> (<span class="params">str: string</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> hit = cache[str]</span><br><span class="line">    <span class="keyword">return</span> hit || (cache[str] = fn(str))</span><br><span class="line">  &#125;: any)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建了一个对象cache，返回执行函数，在执行函数中对字符串做相应的处理并存在cache中，下次再处理相同的字符串时，首先在cache中查找字符串对应的key，如果能找到则直接读取而无需重新处理，提高了执行速度。这里利用了闭包的特性，即返回的立即执行函数 cachedFn 可以引用起外部函数中的cache对象，即使当 cached 执行完毕后，其活动对象也不会销毁，cachedFn 仍然可以引用 cache，取得其最后一个值即已保存了混村对象的值。</p>
+<p>用例：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> camelizeRE = <span class="regexp">/-(\w)/g</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> camelize = cached((str: string): <span class="function"><span class="params">string</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> str.replace(camelizeRE, (_, c) =&gt; c ? c.toUpperCase() : <span class="string">''</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<ol start="8">
+<li>bind polyfill</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">polyfillBind</span> (<span class="params">fn: Function, ctx: Object</span>): <span class="title">Function</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">boundFn</span> (<span class="params">a</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> l = <span class="built_in">arguments</span>.length</span><br><span class="line">    <span class="keyword">return</span> l</span><br><span class="line">      ? l &gt; <span class="number">1</span></span><br><span class="line">        ? fn.apply(ctx, <span class="built_in">arguments</span>)</span><br><span class="line">        : fn.call(ctx, a)</span><br><span class="line">      : fn.call(ctx)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  boundFn._length = fn.length</span><br><span class="line">  <span class="keyword">return</span> boundFn</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">nativeBind</span> (<span class="params">fn: Function, ctx: Object</span>): <span class="title">Function</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> fn.bind(ctx)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> bind = <span class="built_in">Function</span>.prototype.bind</span><br><span class="line">  ? nativeBind</span><br><span class="line">  : polyfillBind</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/06/Vue源码中知识点总结/" data-id="ck11vjstb0002zsuo829tjond" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/09/06/Vue源码中知识点总结/" data-id="ck6nisdap0003f0uozk2aif74" class="article-share-link">Share</a>
       
       
     </footer>
@@ -146,7 +173,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li></ul>
     </div>
   </div>
 
@@ -157,6 +184,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/02/15/浏览器知识总结/">浏览器知识总结</a>
+          </li>
         
           <li>
             <a href="/2019/09/27/Canvas绘制图形/">Canvas绘制图形</a>
@@ -174,10 +205,6 @@
             <a href="/2019/08/23/Vue源码学习之二/">Vue源码学习之二</a>
           </li>
         
-          <li>
-            <a href="/2019/08/17/Vue源码学习之一/">Vue源码学习之一</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -190,7 +217,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2019 Rin&#39;s blog<br>
+      &copy; 2020 Rin&#39;s blog<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>

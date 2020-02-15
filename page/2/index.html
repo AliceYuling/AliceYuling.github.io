@@ -62,6 +62,49 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-深度优先算法实现深拷贝" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/07/14/深度优先算法实现深拷贝/" class="article-date">
+  <time datetime="2019-07-14T05:52:48.000Z" itemprop="datePublished">2019-07-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/07/14/深度优先算法实现深拷贝/">深度优先算法和广度优先算法实现深拷贝</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="深拷贝-amp-浅拷贝"><a href="#深拷贝-amp-浅拷贝" class="headerlink" title="深拷贝&amp;浅拷贝"></a>深拷贝&amp;浅拷贝</h2><p>对于 <code>js</code> 中的简单数据类型，浅拷贝就对值的复制，而对于对象来说，浅拷贝只复制一层对象的属性，并不包括对象里面的为引用类型的数据。修改其中一个对象的属性，则另一个对象的属性也会改变。与赋值不同的是，把一个对象赋值给另一个对象，二者指向同一对象；而把一个对象浅拷贝给另一个对象，二者并不指向同一对象。</p>
+<p>深拷贝则是开辟新的栈，两个对象对应两个不同的地址，修改一个对象的属性，不会改变另一个对象的属性。</p>
+<h2 id="深度优先和广度优先"><a href="#深度优先和广度优先" class="headerlink" title="深度优先和广度优先"></a>深度优先和广度优先</h2><p>深度优先的思想即对数据结构的每个子节点一层一层深度遍历结束后再进行下一个子节点的深度遍历。而广度优先则是从数据结构的最外层遍历，将同一层的子节点遍历完后再进行下一层子节点的遍历。</p>
+<p>深度优先一种实现方式是在取得要遍历的节点时如果发现有子节点（children） 时，则不断的深度遍历，并把这些节点放入一个待搜索的栈（Stack）中，直到最后一个没有子节点的节点时，开始对栈进行搜索。后进先出（下列代码中使用了 push 方法入栈，因此需使用 pop 方法出栈），如果没有匹配到，则删掉此节点，同时删掉父节点中的自身，不断重复遍历直到匹配为止。</p>
+<p>而广度优先的实现则可先把外层的数据结构放入一个待搜索的队列（Queue）中，进而对这个队列进行遍历，当正在遍历的节点存在子节点（children）时则把此子节点下所有节点放入待搜索队列的末端。</p>
+<h2 id="使用深度优先算法实现深拷贝"><a href="#使用深度优先算法实现深拷贝" class="headerlink" title="使用深度优先算法实现深拷贝"></a>使用深度优先算法实现深拷贝</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> _toString = <span class="built_in">Object</span>.prototype.toString</span><br><span class="line"><span class="keyword">let</span> map = &#123;</span><br><span class="line">  array: <span class="string">'Array'</span>,</span><br><span class="line">  object: <span class="string">'Object'</span>,</span><br><span class="line">  <span class="function"><span class="keyword">function</span>: '<span class="title">Function</span>',</span></span><br><span class="line"><span class="function">  <span class="title">string</span>: '<span class="title">String</span>',</span></span><br><span class="line"><span class="function">  <span class="title">null</span>: '<span class="title">Null</span>',</span></span><br><span class="line"><span class="function">  <span class="title">undefined</span>: '<span class="title">Undefined</span>',</span></span><br><span class="line"><span class="function">  <span class="title">boolean</span>: '<span class="title">Boolean</span>',</span></span><br><span class="line"><span class="function">  <span class="title">number</span>: '<span class="title">Number</span>'</span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"><span class="title">let</span> <span class="title">getType</span> = (<span class="params">item</span>) =&gt; </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> _toString.call(item).slice(<span class="number">8</span>, <span class="number">-1</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> isTypeOf = <span class="function">(<span class="params">item, type</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> map[type] &amp;&amp; map[type] === getType(item)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> DFSdeepClone = <span class="function">(<span class="params">obj, visitedArr = []</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> _obj = &#123;&#125;</span><br><span class="line">  <span class="keyword">if</span> (isTypeOf(obj, <span class="string">'array'</span>) || isTypeOf(obj, <span class="string">'object'</span>)) &#123;</span><br><span class="line">    <span class="keyword">let</span> index = visitedArr.indexOf(obj)</span><br><span class="line">    _obj = isTypeOf(obj, <span class="string">'array'</span>) ? [] : &#123;&#125;</span><br><span class="line">    <span class="keyword">if</span> (~index) &#123; <span class="comment">// 判断环状数据</span></span><br><span class="line">      _obj = visitedArr[index]</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      visitedArr.push(obj)</span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">let</span> item <span class="keyword">in</span> obj) &#123;</span><br><span class="line">        _obj[item] = DFSdeepClone(obj[item], visitedArr)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isTypeOf(obj, <span class="string">'function'</span>)) &#123;</span><br><span class="line">    _obj = <span class="built_in">eval</span>(<span class="string">'('</span> + obj.toString() + <span class="string">')'</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    _obj = obj</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> _obj</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="广度优先算法实现深拷贝"><a href="#广度优先算法实现深拷贝" class="headerlink" title="广度优先算法实现深拷贝"></a>广度优先算法实现深拷贝</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> BFSdeepClone = <span class="function">(<span class="params">obj</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> origin = [obj],</span><br><span class="line">      copyObj = &#123;&#125;,</span><br><span class="line">      copy = [copyObj]</span><br><span class="line">      <span class="comment">// 去除环状数据</span></span><br><span class="line">    <span class="keyword">let</span> visitedQueue = [],</span><br><span class="line">      visitedCopyQueue = []</span><br><span class="line">    <span class="keyword">while</span> (origin.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="keyword">let</span> items = origin.shift(),</span><br><span class="line">        _obj = copy.shift()</span><br><span class="line">      visitedQueue.push(items)</span><br><span class="line">      <span class="keyword">if</span> (isTypeOf(items, <span class="string">'object'</span>) || isTypeOf(items, <span class="string">'array'</span>)) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> item <span class="keyword">in</span> items) &#123;</span><br><span class="line">          <span class="keyword">let</span> val = items[item]</span><br><span class="line">          <span class="keyword">if</span> (isTypeOf(val, <span class="string">'object'</span>)) &#123;</span><br><span class="line">            <span class="keyword">let</span> index = visitedQueue.indexOf(val)</span><br><span class="line">            <span class="keyword">if</span> (!~index) &#123;</span><br><span class="line">              _obj[item] = &#123;&#125;</span><br><span class="line">                <span class="comment">//下次while循环使用给空对象提供数据</span></span><br><span class="line">              origin.push(val)</span><br><span class="line">                <span class="comment">// 推入引用对象</span></span><br><span class="line">              copy.push(_obj[item])</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">              _obj[item] = visitedCopyQueue[index]</span><br><span class="line">              visitedQueue.push(_obj)</span><br><span class="line">            &#125;</span><br><span class="line">          &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isTypeOf(val, <span class="string">'array'</span>)) &#123;</span><br><span class="line">            <span class="comment">// 数组类型在这里创建了一个空数组</span></span><br><span class="line">            _obj[item] = []</span><br><span class="line">            origin.push(val)</span><br><span class="line">            copy.push(_obj[item])</span><br><span class="line">          &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isTypeOf(val, <span class="string">'function'</span>)) &#123;</span><br><span class="line">            _obj[item] = <span class="built_in">eval</span>(<span class="string">'('</span> + val.toString() + <span class="string">')'</span>);</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            _obj[item] = val</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 将已经处理过的对象数据推入数组 给环状数据使用</span></span><br><span class="line">        visitedCopyQueue.push(_obj)</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isTypeOf(items, <span class="string">'function'</span>)) &#123;</span><br><span class="line">        copyObj = <span class="built_in">eval</span>(<span class="string">'('</span> + items.toString() + <span class="string">')'</span>);</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        copyObj = obj</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="keyword">return</span> copyObj</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/07/14/深度优先算法实现深拷贝/" data-id="ck6nisdb5000df0uogaicgchj" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Service-Worker学习小结" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/07/04/Service-Worker学习小结/" class="article-date">
@@ -109,7 +152,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="ck11vjstc0003zsuorhvn51mw" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="ck6nisdao0002f0uo2ckoiyfk" class="article-share-link">Share</a>
       
       
     </footer>
@@ -152,7 +195,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/30/docker基础学习/" data-id="ck11vjsth0007zsuowmlb11aj" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/30/docker基础学习/" data-id="ck6nisdat0006f0uo52xs1ztn" class="article-share-link">Share</a>
       
       
     </footer>
@@ -221,7 +264,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/21/grid布局/" data-id="ck11vjstj0009zsuoacpyml8y" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/21/grid布局/" data-id="ck6nisdaw0008f0uo9onczysg" class="article-share-link">Share</a>
       
       
     </footer>
@@ -277,7 +320,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/13/节流和防抖函数/" data-id="ck11vjsto000dzsuo25f0p6x0" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/13/节流和防抖函数/" data-id="ck6nisdb6000ef0uoicenbe73" class="article-share-link">Share</a>
       
       
     </footer>
@@ -310,7 +353,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li></ul>
     </div>
   </div>
 
@@ -321,6 +364,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/02/15/浏览器知识总结/">浏览器知识总结</a>
+          </li>
         
           <li>
             <a href="/2019/09/27/Canvas绘制图形/">Canvas绘制图形</a>
@@ -338,10 +385,6 @@
             <a href="/2019/08/23/Vue源码学习之二/">Vue源码学习之二</a>
           </li>
         
-          <li>
-            <a href="/2019/08/17/Vue源码学习之一/">Vue源码学习之一</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -354,7 +397,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2019 Rin&#39;s blog<br>
+      &copy; 2020 Rin&#39;s blog<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
