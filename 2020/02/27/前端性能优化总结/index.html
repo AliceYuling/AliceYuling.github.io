@@ -14,7 +14,7 @@
 <meta property="og:site_name" content="Rin&#39;s blog">
 <meta property="og:description" content="前端性能优化也是一个老生常谈的问题了，前端性能优化的方法有很多种，之前在项目中一直都是遇到问题了再对症下药，一直也没对前端优化的方案进行总结，这篇文章就是对自己所了解的优化知识做一个总结和巩固。 加载优化 请求包优化对代码进行压缩，减少加载时间：1）html压缩： 将注释、空格和新行等从代码中删除，减少HTML大小，加快网站页面加载时间2）css压缩：将注释、空格和新行等从代码中删除3）图片压缩：">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-02-28T15:26:11.923Z">
+<meta property="og:updated_time" content="2020-02-28T15:36:07.828Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="前端性能优化总结&#39;">
 <meta name="twitter:description" content="前端性能优化也是一个老生常谈的问题了，前端性能优化的方法有很多种，之前在项目中一直都是遇到问题了再对症下药，一直也没对前端优化的方案进行总结，这篇文章就是对自己所了解的优化知识做一个总结和巩固。 加载优化 请求包优化对代码进行压缩，减少加载时间：1）html压缩： 将注释、空格和新行等从代码中删除，减少HTML大小，加快网站页面加载时间2）css压缩：将注释、空格和新行等从代码中删除3）图片压缩：">
@@ -147,11 +147,12 @@
 <p>##　使用CDN</p>
 <p>  将内容放在各地的边缘服务器，用户请求时从最近的服务器获取内容，提高用户访问网站的速度。如jQuery等一类的库文件，可以使用CDN进行加载。</p>
 <h2 id="协议性能"><a href="#协议性能" class="headerlink" title="协议性能"></a>协议性能</h2><p>HTTP1.x存在连接无法复用、队头阻塞、协议头开销大的问题，而http2.0连接能够复用以及header压缩，能够极大地提高传输性能。</p>
+<p>客户端也可以使用支持压缩的Accept-Encoding请求头： <code>Accept-Encoding: gzip, deflate</code>， 服务器接收到这个请求头，会使用客户端列出的一种方式来压缩响应。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/02/27/前端性能优化总结/" data-id="ck76bxlhg0008zguobu4fuyxy" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/02/27/前端性能优化总结/" data-id="ck76cerv3000ankuof9jjhfx6" class="article-share-link">Share</a>
       
       
     </footer>
