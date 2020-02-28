@@ -62,6 +62,103 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-前端性能优化总结" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/02/27/前端性能优化总结/" class="article-date">
+  <time datetime="2020-02-27T00:51:51.000Z" itemprop="datePublished">2020-02-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/02/27/前端性能优化总结/">前端性能优化总结&#39;</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>前端性能优化也是一个老生常谈的问题了，前端性能优化的方法有很多种，之前在项目中一直都是遇到问题了再对症下药，一直也没对前端优化的方案进行总结，这篇文章就是对自己所了解的优化知识做一个总结和巩固。</p>
+<h2 id="加载优化"><a href="#加载优化" class="headerlink" title="加载优化"></a>加载优化</h2><ol>
+<li><p>请求包优化<br>对代码进行压缩，减少加载时间：<br>1）html压缩： 将注释、空格和新行等从代码中删除，减少HTML大小，加快网站页面加载时间<br>2）css压缩：将注释、空格和新行等从代码中删除<br>3）图片压缩： 可参考后面图片相关优化<br>4）使用gzip压缩传输内容</p>
+</li>
+<li><p>合理减少请求Header字段和cookie大小以减小http请求的大小</p>
+</li>
+<li><p>MTU策略<br>MTU即最大传输单元（Maximum Transmission Unit), TCP的MTU一般认为是1500B，那么可以合理控制请求内容在一个MTU内。</p>
+</li>
+</ol>
+<h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><p>缓存技术相当于用空间换取时间，它可以非常有效地提升性能。对于前端来说，主要接触到的是浏览器的缓存，当浏览器请求一个网站的时候，会加载html、css、js、图片等各种资源，其中有些资源是不会经常变化的，对于这些资源浏览器会将其保存在本地缓存中，下次再访问这些资源时，直接中缓存中取出资源，比向服务器发起请求更快，并且可以减少服务器的负载。</p>
+<p>HTTP报文中与缓存相关的字段主要有：</p>
+<ul>
+<li><p>Cache-Control: 在Cache-Contro中可设置max-age(最大缓存时间)、public(缓存能够被用户共享)、private、no-cache(资源不进行缓存，但在缓存前要向服务器确认资源是否被更改)、no-store(绝对禁止缓存)</p>
+</li>
+<li><p>Last-Modified: 资源的最后修改时间，在响应头中返回。浏览器收到带Last-Modified的响应头后，下次发送请求就会带上If-Modified-Since或者If-Unmodified-Since，服务器收到这个request的If-Modified-Since后，通过读取它的值对比资源存在的地方的Last-Modified，服务器就告诉浏览器是否可以使用缓存。</p>
+</li>
+<li><p>Etag: 对于Last-Modified来说可能会出现同一秒中的修改或者服务器上文件修改的时间不一致这样的问题，Etag是一个相对更为严格的验证，它是根据文件的内容生成Etag（数据签名，最常用做法是对资源内容进行哈希计算），收到带Etag这个头，下次浏览器发送请求就会带上If-Match或者If-Non-Match。 If-Match表示只有当请求的资源Etag匹配的情况下服务器才返回资源， If-None-Match则反之。 服务器收到这个请求的If-Match或者If-Non-Match后，通过读取它的值对比资源存在的地方的Etag，服务器就告诉浏览器是否可以使用缓存。</p>
+</li>
+<li><p>If-Match/If-None-Match: 参考Etag</p>
+</li>
+<li><p>If-Modified-Since: 只有当资源在指定的时间之后进行过修改的情况下，服务器才会返回请求的资源</p>
+</li>
+<li><p>If-Unmodified-Since：只有当资源在指定的时间之后没有进行过修改的情况下，服务器才会返回请求的资源</p>
+</li>
+<li><p>Expires: 过期时间</p>
+</li>
+</ul>
+<p>对于前端缓存，可以使用Service Worker来设置缓存策略。如图片等不太变化的资源可以使用缓存优先的策略，js\css如果有hash的话可以使用stalewhileRevalidate的缓存策略。</p>
+<h2 id="图片相关优化"><a href="#图片相关优化" class="headerlink" title="图片相关优化"></a>图片相关优化</h2><p>在前端一个页面可能会同时展示大量的图片，图片越多请求的次数越多，造成的页面延迟可能就越高。图片优化是前端性能优化中重要的一项工作，针对图片优化有以下几种方案：</p>
+<ol>
+<li><p>减小图片体积<br>利用图片压缩工具压缩图片的体积，如使用tinypng,pngquant等。需要注意的是jpg图片不能多次压缩。</p>
+</li>
+<li><p>图片懒加载<br>图片的懒加载一种是图片列表滚动加载，当图片滚动到其即将要显示的位置时才加载。方法是监听滚动条判断图片是否即将可见，当图片即将可见时再发起http请求获取图片。</p>
+</li>
+<li><p>使用字体图库代替图片<br>如使用font-awesome等字体图库代替图标，或者可以用css制作一些简单的图标代替图片图标。</p>
+</li>
+<li><p>使用雪碧图<br>将多张图片合成一张大图，加载图片时通过坐标定位的方式从大图中取到需要的图片。这样原本需要请求多张图片现在只需要请求一次即可。</p>
+</li>
+<li><p>使用svg/canvas绘制图片</p>
+</li>
+</ol>
+<h2 id="DOM相关优化"><a href="#DOM相关优化" class="headerlink" title="DOM相关优化"></a>DOM相关优化</h2><p>在js中对DOM进行操作可能会非常的耗费性能，例如修改DOM元素的颜色造成repaint，修改元素大小、位置或添加可见的DOM元素等导致reflow，以及对DOM的访问、事件处理等都会影响网页的性能。与DOM相关的优化主要有以下几种：</p>
+<ol>
+<li><p>减少repaint和reflow<br>1）合并样式改变，减少repaint和reflow，如使用cssText或者使用className来对多次样式修改进行合并，以减少浏览器的重新渲染<br>2）在需要对DOM进行一系列操作的时候，可以使DOM先脱离文档流，给其添加完相应的改变之后，再添加到文档流中。例如，先隐藏需要进行操作的愿随，使用DocumentFragment存储这些元素,在 DocumentFragment中对DOM进行修改后，再替换原本的元素。</p>
+</li>
+<li><p>事件委托<br>事件委托是指将子元素上的事件绑定在父元素上，利用事件冒泡机制，在父元素绑定的监听函数中进行事件的处理。在有很多元素都需要进行事件监听的情况下，给每个元素都分别绑定监听函数的话，对内存比较浪费。利用事件委托的话，可以减少内存的浪费，并且在对监听函数进行解绑的时候，处理起来比较方便。</p>
+</li>
+<li><p>DOM的修改<br>需要对同一个DOM进行修改时，可以合并统一属性的修改，减少浏览器重新计算导致页面的重新渲染</p>
+</li>
+<li><p>DOM的访问<br>需要多次使用同一个DOM元素或其属性时，可以使用一个变量保存它。如遍历一个DOM list时，将其length属性保存在循环外面。此外，使用querySelector比getElementById和getElementsByTagName查找元素会快一些。</p>
+</li>
+</ol>
+<h2 id="运行性能"><a href="#运行性能" class="headerlink" title="运行性能"></a>运行性能</h2><ol>
+<li><p>防抖&amp;节流<br>在输入、窗口resize、滚动等会发生高频触发事件的场景中，如果每次事件触发都执行一次事件，则高频地执行事件可能会导致页面卡顿、浏览器崩溃等情况出现。使用防抖/节流可以降低事件函数的执行频率或者将事件函数的多次调用压缩成一次，提高运行性能。<br>具体参考之前的博文： <a href="https://aliceyuling.github.io/2019/06/13/节流和防抖函数/" target="_blank" rel="noopener">https://aliceyuling.github.io/2019/06/13/节流和防抖函数/</a></p>
+</li>
+<li><p>动画性能<br>一般设备屏幕的刷新频率为 60次/秒，每帧运行时间约为1s/60=16.66ms, 因此动画代码的运行时间需要控制在10ms以内才能看起来流畅。</p>
+</li>
+</ol>
+<p>##　使用CDN</p>
+<p>  将内容放在各地的边缘服务器，用户请求时从最近的服务器获取内容，提高用户访问网站的速度。如jQuery等一类的库文件，可以使用CDN进行加载。</p>
+<h2 id="协议性能"><a href="#协议性能" class="headerlink" title="协议性能"></a>协议性能</h2><p>HTTP1.x存在连接无法复用、队头阻塞、协议头开销大的问题，而http2.0连接能够复用以及header压缩，能够极大地提高传输性能。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/02/27/前端性能优化总结/" data-id="ck76bxlhg0008zguobu4fuyxy" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-浏览器知识总结" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/02/15/浏览器知识总结/" class="article-date">
@@ -160,7 +257,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/02/15/浏览器知识总结/" data-id="ck6nisdb4000cf0uosr5j2zss" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/02/15/浏览器知识总结/" data-id="ck76bxlhn000dzguoiy14to7c" class="article-share-link">Share</a>
       
       
     </footer>
@@ -207,7 +304,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/27/Canvas绘制图形/" data-id="ck6nisdal0001f0uoe39nilv9" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/09/27/Canvas绘制图形/" data-id="ck76bxlha0005zguoll2ou7v2" class="article-share-link">Share</a>
       
       
     </footer>
@@ -258,7 +355,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/06/Vue源码学习之三/" data-id="ck6nisdar0004f0uojbn1db4b" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/09/06/Vue源码学习之三/" data-id="ck76bxlhc0006zguolhhl8vwl" class="article-share-link">Share</a>
       
       
     </footer>
@@ -332,7 +429,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/06/Vue源码中知识点总结/" data-id="ck6nisdap0003f0uozk2aif74" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/09/06/Vue源码中知识点总结/" data-id="ck76bxlh80003zguozxibu2ry" class="article-share-link">Share</a>
       
       
     </footer>
@@ -389,7 +486,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/23/Vue源码学习之二/" data-id="ck6nisdas0005f0uo2mahyz8z" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/08/23/Vue源码学习之二/" data-id="ck76bxlhe0007zguo2yryhkn1" class="article-share-link">Share</a>
       
       
     </footer>
@@ -450,7 +547,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/17/Vue源码学习之一/" data-id="ck6nisdae0000f0uozminp4q2" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/08/17/Vue源码学习之一/" data-id="ck76bxlh40001zguo6ygyr59c" class="article-share-link">Share</a>
       
       
     </footer>
@@ -521,7 +618,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/09/element源码学习/" data-id="ck6nisdav0007f0uoafyt18f2" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/08/09/element源码学习/" data-id="ck76bxlh90004zguob5y10p4i" class="article-share-link">Share</a>
       
       
     </footer>
@@ -579,7 +676,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/05/web安全之xss攻击/" data-id="ck6nisday0009f0uoztgzt3pb" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/08/05/web安全之xss攻击/" data-id="ck76bxlhm000czguotpr84pdz" class="article-share-link">Share</a>
       
       
     </footer>
@@ -635,81 +732,7 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/17/web安全之CSRF攻击/" data-id="ck6nisdb0000af0uouis2glmu" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-基于Token的身份验证方案" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/07/16/基于Token的身份验证方案/" class="article-date">
-  <time datetime="2019-07-16T07:41:12.000Z" itemprop="datePublished">2019-07-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/07/16/基于Token的身份验证方案/">基于Token的身份验证方案</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>客户端在向服务端请求资源的时候，由于有些资源是需要用户身份才能拿到的，这时候就要进行用户身份认证。而HTTP协议是无状态的，即当一个客户端请求发送给服务器的时候，服务器并不知道上一次发送请求的客户端的身份。每次发送请求都必须重新登录进行身份，要解决这个问题，常见的方案有基于会话的身份验证方案和基于Token的身份验证方案。</p>
-<h2 id="传统身份验证的方法"><a href="#传统身份验证的方法" class="headerlink" title="传统身份验证的方法"></a>传统身份验证的方法</h2><p>传统的用户身份认证基于会话。用户请求登录时，服务端经过验证登录信息没有问题时，会生成一条会话记录，这条记录里面说明了登录的用户是谁。服务器端返回给客户端一个 sessionID，客户端将 sessionID 存储在 Cookie 中，在下次这个用户请求时，带上这个Cookie，服务器端收到这个Cookie后，取出其中的 sessionID 并在已存储的会话信息中查找，如果找到了该sessionID的话，说明用户已登录过尚在会话期间，那么就将用户请求的数据返回而无需重新登录。</p>
-<p>基于会话的用户身份认证存在以下的问题：</p>
-<ul>
-<li>对每个用户的认证信息都需要存储在服务端，当用户会话增多之后，会增加服务器的存储开销</li>
-<li>容易受到XSRF攻击</li>
-</ul>
-<h2 id="基于-Token-的身份认证方式"><a href="#基于-Token-的身份认证方式" class="headerlink" title="基于 Token 的身份认证方式"></a>基于 Token 的身份认证方式</h2><p>基于 Token 的身份认证方式主要工作流程如下：</p>
-<ol>
-<li><p>用户携带用户名和密码等信息请求访问</p>
-</li>
-<li><p>服务端校验用户信息没有问题后，生成一个 token</p>
-</li>
-<li><p>服务端将 token 返回给客户端</p>
-</li>
-<li><p>客户端将 token 存储在本地</p>
-</li>
-<li><p>在之后的每一次请求中客户端都携带 token， 服务端校验 token</p>
-</li>
-</ol>
-<h3 id="Token-的实施-–-JWT"><a href="#Token-的实施-–-JWT" class="headerlink" title="Token 的实施 – JWT"></a>Token 的实施 – JWT</h3><p>JWT 的全程为 JSON Web Tokens，它是一个一个开放标准(RFC 7519)，它定义了一种紧凑的、自包含的方式，用于作为JSON对象在各方之间安全地传输信息。</p>
-<p>JWT 标准的 Token 有三个部分：</p>
-<ul>
-<li>header</li>
-<li>payload</li>
-<li>signature</li>
-</ul>
-<p>这三部分中间用 <code>.</code> 分隔开。</p>
-<p>Header 是 JWT 的头部数据，里面包含了使用的算法与 token 的类型的 JSON 对象。如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;alg&quot;: &quot;HS256&quot;,</span><br><span class="line">  &apos;typ: &quot;JWT&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>将此JSON对象使用 base64 算法转换为字符串即为 JWT header。</p>
-<p>Payload 是 JWT 的主体内容部分， 也是一个 JSON 对象，其中包含了需要传递的数据，如发行人、到期时间、发布时间等。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;iss&quot;：&quot;发行人&quot;,</span><br><span class="line">  &quot;exp&quot;：&quot;到期时间&quot;,</span><br><span class="line">  &quot;sub&quot;：&quot;主题&quot;,</span><br><span class="line">  &quot;aud&quot;：&quot;用户&quot;,</span><br><span class="line">  &quot;nbf&quot;：&quot;在此之前不可用&quot;,</span><br><span class="line">  &quot;iat&quot;：&quot;发布时间&quot;,</span><br><span class="line">  &quot;jti&quot;：&quot;JWT ID用于标识该JWT&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>除了以上七个 JWT 定义的默认的字段外，还可自定义字段。 同样使用 base64 算法转换成字符串后即为 JWT 的 payload 部分。</p>
-<p>Signature 是签名部分，对 header 和 payload 通过指定的算法加密后生成，在加密时指定一个 密钥（secret）， 该密钥存储在服务器中不得向用户公开。</p>
-<p>以上三部分分别计算出后，使用 <code>.</code> 号分隔组合成的字符串即为 JWT token。</p>
-<h3 id="如何防止-token-冒充"><a href="#如何防止-token-冒充" class="headerlink" title="如何防止 token 冒充"></a>如何防止 token 冒充</h3><p>客户端在接收到服务端返回的 token 后，一般把 token 存在浏览器 local storage 或者其他存储中，那么如果有人复制了这个 token，拷贝到另一个客户端使用，该怎么防止这种情况呢？</p>
-<p>为了防止 token 冒充，服务端在生成 token 时使用 UserAgent 作为干扰码，不同的客户端干扰码不一样，那么直接将 token 拷贝到另一个客户端使用则无法验证成功，在一定程度上起到了防冒充的作用。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/16/基于Token的身份验证方案/" data-id="ck6nisdb2000bf0uo3bj3e65p" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/17/web安全之CSRF攻击/" data-id="ck76bxlhj000azguodzaugkiq" class="article-share-link">Share</a>
       
       
     </footer>
@@ -755,6 +778,10 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
       <ul>
         
           <li>
+            <a href="/2020/02/27/前端性能优化总结/">前端性能优化总结&#39;</a>
+          </li>
+        
+          <li>
             <a href="/2020/02/15/浏览器知识总结/">浏览器知识总结</a>
           </li>
         
@@ -768,10 +795,6 @@ vnode.context.popperElm.contains(mousedown.target))))</code>: 如果点击在下
         
           <li>
             <a href="/2019/09/06/Vue源码中知识点总结/">Vue源码中知识点总结</a>
-          </li>
-        
-          <li>
-            <a href="/2019/08/23/Vue源码学习之二/">Vue源码学习之二</a>
           </li>
         
       </ul>

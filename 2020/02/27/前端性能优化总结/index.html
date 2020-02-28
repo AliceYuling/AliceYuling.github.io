@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>前端性能优化总结&#39; | Rin&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前端性能优化也是一个老生常谈的问题了，前端性能优化的方法有很多种，之前在项目中一直都是遇到问题了再对症下药，一直也没对前端优化的方案进行总结，这篇文章就是对自己所了解的优化知识做一个总结和巩固。 加载优化 请求包优化对代码进行压缩，减少加载时间：1）html压缩： 将注释、空格和新行等从代码中删除，减少HTML大小，加快网站页面加载时间2）css压缩：将注释、空格和新行等从代码中删除3）图片压缩：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端性能优化总结&#39;">
+<meta property="og:url" content="http://yoursite.com/2020/02/27/前端性能优化总结/index.html">
+<meta property="og:site_name" content="Rin&#39;s blog">
+<meta property="og:description" content="前端性能优化也是一个老生常谈的问题了，前端性能优化的方法有很多种，之前在项目中一直都是遇到问题了再对症下药，一直也没对前端优化的方案进行总结，这篇文章就是对自己所了解的优化知识做一个总结和巩固。 加载优化 请求包优化对代码进行压缩，减少加载时间：1）html压缩： 将注释、空格和新行等从代码中删除，减少HTML大小，加快网站页面加载时间2）css压缩：将注释、空格和新行等从代码中删除3）图片压缩：">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-02-28T15:26:11.923Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="前端性能优化总结&#39;">
+<meta name="twitter:description" content="前端性能优化也是一个老生常谈的问题了，前端性能优化的方法有很多种，之前在项目中一直都是遇到问题了再对症下药，一直也没对前端优化的方案进行总结，这篇文章就是对自己所了解的优化知识做一个总结和巩固。 加载优化 请求包优化对代码进行压缩，减少加载时间：1）html压缩： 将注释、空格和新行等从代码中删除，减少HTML大小，加快网站页面加载时间2）css压缩：将注释、空格和新行等从代码中删除3）图片压缩：">
+  
+    <link rel="alternate" href="/atom.xml" title="Rin&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Rin&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-前端性能优化总结" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/02/27/前端性能优化总结/" class="article-date">
+  <time datetime="2020-02-27T00:51:51.000Z" itemprop="datePublished">2020-02-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      前端性能优化总结&#39;
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>前端性能优化也是一个老生常谈的问题了，前端性能优化的方法有很多种，之前在项目中一直都是遇到问题了再对症下药，一直也没对前端优化的方案进行总结，这篇文章就是对自己所了解的优化知识做一个总结和巩固。</p>
+<h2 id="加载优化"><a href="#加载优化" class="headerlink" title="加载优化"></a>加载优化</h2><ol>
+<li><p>请求包优化<br>对代码进行压缩，减少加载时间：<br>1）html压缩： 将注释、空格和新行等从代码中删除，减少HTML大小，加快网站页面加载时间<br>2）css压缩：将注释、空格和新行等从代码中删除<br>3）图片压缩： 可参考后面图片相关优化<br>4）使用gzip压缩传输内容</p>
+</li>
+<li><p>合理减少请求Header字段和cookie大小以减小http请求的大小</p>
+</li>
+<li><p>MTU策略<br>MTU即最大传输单元（Maximum Transmission Unit), TCP的MTU一般认为是1500B，那么可以合理控制请求内容在一个MTU内。</p>
+</li>
+</ol>
+<h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><p>缓存技术相当于用空间换取时间，它可以非常有效地提升性能。对于前端来说，主要接触到的是浏览器的缓存，当浏览器请求一个网站的时候，会加载html、css、js、图片等各种资源，其中有些资源是不会经常变化的，对于这些资源浏览器会将其保存在本地缓存中，下次再访问这些资源时，直接中缓存中取出资源，比向服务器发起请求更快，并且可以减少服务器的负载。</p>
+<p>HTTP报文中与缓存相关的字段主要有：</p>
+<ul>
+<li><p>Cache-Control: 在Cache-Contro中可设置max-age(最大缓存时间)、public(缓存能够被用户共享)、private、no-cache(资源不进行缓存，但在缓存前要向服务器确认资源是否被更改)、no-store(绝对禁止缓存)</p>
+</li>
+<li><p>Last-Modified: 资源的最后修改时间，在响应头中返回。浏览器收到带Last-Modified的响应头后，下次发送请求就会带上If-Modified-Since或者If-Unmodified-Since，服务器收到这个request的If-Modified-Since后，通过读取它的值对比资源存在的地方的Last-Modified，服务器就告诉浏览器是否可以使用缓存。</p>
+</li>
+<li><p>Etag: 对于Last-Modified来说可能会出现同一秒中的修改或者服务器上文件修改的时间不一致这样的问题，Etag是一个相对更为严格的验证，它是根据文件的内容生成Etag（数据签名，最常用做法是对资源内容进行哈希计算），收到带Etag这个头，下次浏览器发送请求就会带上If-Match或者If-Non-Match。 If-Match表示只有当请求的资源Etag匹配的情况下服务器才返回资源， If-None-Match则反之。 服务器收到这个请求的If-Match或者If-Non-Match后，通过读取它的值对比资源存在的地方的Etag，服务器就告诉浏览器是否可以使用缓存。</p>
+</li>
+<li><p>If-Match/If-None-Match: 参考Etag</p>
+</li>
+<li><p>If-Modified-Since: 只有当资源在指定的时间之后进行过修改的情况下，服务器才会返回请求的资源</p>
+</li>
+<li><p>If-Unmodified-Since：只有当资源在指定的时间之后没有进行过修改的情况下，服务器才会返回请求的资源</p>
+</li>
+<li><p>Expires: 过期时间</p>
+</li>
+</ul>
+<p>对于前端缓存，可以使用Service Worker来设置缓存策略。如图片等不太变化的资源可以使用缓存优先的策略，js\css如果有hash的话可以使用stalewhileRevalidate的缓存策略。</p>
+<h2 id="图片相关优化"><a href="#图片相关优化" class="headerlink" title="图片相关优化"></a>图片相关优化</h2><p>在前端一个页面可能会同时展示大量的图片，图片越多请求的次数越多，造成的页面延迟可能就越高。图片优化是前端性能优化中重要的一项工作，针对图片优化有以下几种方案：</p>
+<ol>
+<li><p>减小图片体积<br>利用图片压缩工具压缩图片的体积，如使用tinypng,pngquant等。需要注意的是jpg图片不能多次压缩。</p>
+</li>
+<li><p>图片懒加载<br>图片的懒加载一种是图片列表滚动加载，当图片滚动到其即将要显示的位置时才加载。方法是监听滚动条判断图片是否即将可见，当图片即将可见时再发起http请求获取图片。</p>
+</li>
+<li><p>使用字体图库代替图片<br>如使用font-awesome等字体图库代替图标，或者可以用css制作一些简单的图标代替图片图标。</p>
+</li>
+<li><p>使用雪碧图<br>将多张图片合成一张大图，加载图片时通过坐标定位的方式从大图中取到需要的图片。这样原本需要请求多张图片现在只需要请求一次即可。</p>
+</li>
+<li><p>使用svg/canvas绘制图片</p>
+</li>
+</ol>
+<h2 id="DOM相关优化"><a href="#DOM相关优化" class="headerlink" title="DOM相关优化"></a>DOM相关优化</h2><p>在js中对DOM进行操作可能会非常的耗费性能，例如修改DOM元素的颜色造成repaint，修改元素大小、位置或添加可见的DOM元素等导致reflow，以及对DOM的访问、事件处理等都会影响网页的性能。与DOM相关的优化主要有以下几种：</p>
+<ol>
+<li><p>减少repaint和reflow<br>1）合并样式改变，减少repaint和reflow，如使用cssText或者使用className来对多次样式修改进行合并，以减少浏览器的重新渲染<br>2）在需要对DOM进行一系列操作的时候，可以使DOM先脱离文档流，给其添加完相应的改变之后，再添加到文档流中。例如，先隐藏需要进行操作的愿随，使用DocumentFragment存储这些元素,在 DocumentFragment中对DOM进行修改后，再替换原本的元素。</p>
+</li>
+<li><p>事件委托<br>事件委托是指将子元素上的事件绑定在父元素上，利用事件冒泡机制，在父元素绑定的监听函数中进行事件的处理。在有很多元素都需要进行事件监听的情况下，给每个元素都分别绑定监听函数的话，对内存比较浪费。利用事件委托的话，可以减少内存的浪费，并且在对监听函数进行解绑的时候，处理起来比较方便。</p>
+</li>
+<li><p>DOM的修改<br>需要对同一个DOM进行修改时，可以合并统一属性的修改，减少浏览器重新计算导致页面的重新渲染</p>
+</li>
+<li><p>DOM的访问<br>需要多次使用同一个DOM元素或其属性时，可以使用一个变量保存它。如遍历一个DOM list时，将其length属性保存在循环外面。此外，使用querySelector比getElementById和getElementsByTagName查找元素会快一些。</p>
+</li>
+</ol>
+<h2 id="运行性能"><a href="#运行性能" class="headerlink" title="运行性能"></a>运行性能</h2><ol>
+<li><p>防抖&amp;节流<br>在输入、窗口resize、滚动等会发生高频触发事件的场景中，如果每次事件触发都执行一次事件，则高频地执行事件可能会导致页面卡顿、浏览器崩溃等情况出现。使用防抖/节流可以降低事件函数的执行频率或者将事件函数的多次调用压缩成一次，提高运行性能。<br>具体参考之前的博文： <a href="https://aliceyuling.github.io/2019/06/13/节流和防抖函数/" target="_blank" rel="noopener">https://aliceyuling.github.io/2019/06/13/节流和防抖函数/</a></p>
+</li>
+<li><p>动画性能<br>一般设备屏幕的刷新频率为 60次/秒，每帧运行时间约为1s/60=16.66ms, 因此动画代码的运行时间需要控制在10ms以内才能看起来流畅。</p>
+</li>
+</ol>
+<p>##　使用CDN</p>
+<p>  将内容放在各地的边缘服务器，用户请求时从最近的服务器获取内容，提高用户访问网站的速度。如jQuery等一类的库文件，可以使用CDN进行加载。</p>
+<h2 id="协议性能"><a href="#协议性能" class="headerlink" title="协议性能"></a>协议性能</h2><p>HTTP1.x存在连接无法复用、队头阻塞、协议头开销大的问题，而http2.0连接能够复用以及header压缩，能够极大地提高传输性能。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/02/27/前端性能优化总结/" data-id="ck76bxlhg0008zguobu4fuyxy" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2020/02/15/浏览器知识总结/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">浏览器知识总结</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/02/27/前端性能优化总结/">前端性能优化总结&#39;</a>
+          </li>
+        
+          <li>
+            <a href="/2020/02/15/浏览器知识总结/">浏览器知识总结</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/27/Canvas绘制图形/">Canvas绘制图形</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/06/Vue源码学习之三/">Vue源码学习之三</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/06/Vue源码中知识点总结/">Vue源码中知识点总结</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 Rin&#39;s blog<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

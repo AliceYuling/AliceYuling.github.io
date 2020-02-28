@@ -62,6 +62,80 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-基于Token的身份验证方案" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/07/16/基于Token的身份验证方案/" class="article-date">
+  <time datetime="2019-07-16T07:41:12.000Z" itemprop="datePublished">2019-07-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/07/16/基于Token的身份验证方案/">基于Token的身份验证方案</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>客户端在向服务端请求资源的时候，由于有些资源是需要用户身份才能拿到的，这时候就要进行用户身份认证。而HTTP协议是无状态的，即当一个客户端请求发送给服务器的时候，服务器并不知道上一次发送请求的客户端的身份。每次发送请求都必须重新登录进行身份，要解决这个问题，常见的方案有基于会话的身份验证方案和基于Token的身份验证方案。</p>
+<h2 id="传统身份验证的方法"><a href="#传统身份验证的方法" class="headerlink" title="传统身份验证的方法"></a>传统身份验证的方法</h2><p>传统的用户身份认证基于会话。用户请求登录时，服务端经过验证登录信息没有问题时，会生成一条会话记录，这条记录里面说明了登录的用户是谁。服务器端返回给客户端一个 sessionID，客户端将 sessionID 存储在 Cookie 中，在下次这个用户请求时，带上这个Cookie，服务器端收到这个Cookie后，取出其中的 sessionID 并在已存储的会话信息中查找，如果找到了该sessionID的话，说明用户已登录过尚在会话期间，那么就将用户请求的数据返回而无需重新登录。</p>
+<p>基于会话的用户身份认证存在以下的问题：</p>
+<ul>
+<li>对每个用户的认证信息都需要存储在服务端，当用户会话增多之后，会增加服务器的存储开销</li>
+<li>容易受到XSRF攻击</li>
+</ul>
+<h2 id="基于-Token-的身份认证方式"><a href="#基于-Token-的身份认证方式" class="headerlink" title="基于 Token 的身份认证方式"></a>基于 Token 的身份认证方式</h2><p>基于 Token 的身份认证方式主要工作流程如下：</p>
+<ol>
+<li><p>用户携带用户名和密码等信息请求访问</p>
+</li>
+<li><p>服务端校验用户信息没有问题后，生成一个 token</p>
+</li>
+<li><p>服务端将 token 返回给客户端</p>
+</li>
+<li><p>客户端将 token 存储在本地</p>
+</li>
+<li><p>在之后的每一次请求中客户端都携带 token， 服务端校验 token</p>
+</li>
+</ol>
+<h3 id="Token-的实施-–-JWT"><a href="#Token-的实施-–-JWT" class="headerlink" title="Token 的实施 – JWT"></a>Token 的实施 – JWT</h3><p>JWT 的全程为 JSON Web Tokens，它是一个一个开放标准(RFC 7519)，它定义了一种紧凑的、自包含的方式，用于作为JSON对象在各方之间安全地传输信息。</p>
+<p>JWT 标准的 Token 有三个部分：</p>
+<ul>
+<li>header</li>
+<li>payload</li>
+<li>signature</li>
+</ul>
+<p>这三部分中间用 <code>.</code> 分隔开。</p>
+<p>Header 是 JWT 的头部数据，里面包含了使用的算法与 token 的类型的 JSON 对象。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;alg&quot;: &quot;HS256&quot;,</span><br><span class="line">  &apos;typ: &quot;JWT&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将此JSON对象使用 base64 算法转换为字符串即为 JWT header。</p>
+<p>Payload 是 JWT 的主体内容部分， 也是一个 JSON 对象，其中包含了需要传递的数据，如发行人、到期时间、发布时间等。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;iss&quot;：&quot;发行人&quot;,</span><br><span class="line">  &quot;exp&quot;：&quot;到期时间&quot;,</span><br><span class="line">  &quot;sub&quot;：&quot;主题&quot;,</span><br><span class="line">  &quot;aud&quot;：&quot;用户&quot;,</span><br><span class="line">  &quot;nbf&quot;：&quot;在此之前不可用&quot;,</span><br><span class="line">  &quot;iat&quot;：&quot;发布时间&quot;,</span><br><span class="line">  &quot;jti&quot;：&quot;JWT ID用于标识该JWT&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>除了以上七个 JWT 定义的默认的字段外，还可自定义字段。 同样使用 base64 算法转换成字符串后即为 JWT 的 payload 部分。</p>
+<p>Signature 是签名部分，对 header 和 payload 通过指定的算法加密后生成，在加密时指定一个 密钥（secret）， 该密钥存储在服务器中不得向用户公开。</p>
+<p>以上三部分分别计算出后，使用 <code>.</code> 号分隔组合成的字符串即为 JWT token。</p>
+<h3 id="如何防止-token-冒充"><a href="#如何防止-token-冒充" class="headerlink" title="如何防止 token 冒充"></a>如何防止 token 冒充</h3><p>客户端在接收到服务端返回的 token 后，一般把 token 存在浏览器 local storage 或者其他存储中，那么如果有人复制了这个 token，拷贝到另一个客户端使用，该怎么防止这种情况呢？</p>
+<p>为了防止 token 冒充，服务端在生成 token 时使用 UserAgent 作为干扰码，不同的客户端干扰码不一样，那么直接将 token 拷贝到另一个客户端使用则无法验证成功，在一定程度上起到了防冒充的作用。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/07/16/基于Token的身份验证方案/" data-id="ck76bxlhl000bzguo9oj2mc2l" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-深度优先算法实现深拷贝" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/07/14/深度优先算法实现深拷贝/" class="article-date">
@@ -95,7 +169,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/14/深度优先算法实现深拷贝/" data-id="ck6nisdb5000df0uogaicgchj" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/14/深度优先算法实现深拷贝/" data-id="ck76bxlhp000ezguovksci0uf" class="article-share-link">Share</a>
       
       
     </footer>
@@ -152,7 +226,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="ck6nisdao0002f0uo2ckoiyfk" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/07/04/Service-Worker学习小结/" data-id="ck76bxlgw0000zguoh7u4vd02" class="article-share-link">Share</a>
       
       
     </footer>
@@ -195,7 +269,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/30/docker基础学习/" data-id="ck6nisdat0006f0uo52xs1ztn" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/30/docker基础学习/" data-id="ck76bxlh60002zguoevn9mvrn" class="article-share-link">Share</a>
       
       
     </footer>
@@ -264,7 +338,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/21/grid布局/" data-id="ck6nisdaw0008f0uo9onczysg" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/21/grid布局/" data-id="ck76bxlhi0009zguo062krywk" class="article-share-link">Share</a>
       
       
     </footer>
@@ -320,7 +394,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/13/节流和防抖函数/" data-id="ck6nisdb6000ef0uoicenbe73" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/13/节流和防抖函数/" data-id="ck76bxli8000fzguoy2k2opk1" class="article-share-link">Share</a>
       
       
     </footer>
@@ -366,6 +440,10 @@
       <ul>
         
           <li>
+            <a href="/2020/02/27/前端性能优化总结/">前端性能优化总结&#39;</a>
+          </li>
+        
+          <li>
             <a href="/2020/02/15/浏览器知识总结/">浏览器知识总结</a>
           </li>
         
@@ -379,10 +457,6 @@
         
           <li>
             <a href="/2019/09/06/Vue源码中知识点总结/">Vue源码中知识点总结</a>
-          </li>
-        
-          <li>
-            <a href="/2019/08/23/Vue源码学习之二/">Vue源码学习之二</a>
           </li>
         
       </ul>
